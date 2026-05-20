@@ -5,7 +5,7 @@
  * Falls back to high-quality mock data if the request fails or returns empty.
  */
 
-export const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzmr-QJU-8bqTh2v_QgZxRSv5vO9teJMeZkevmPsvjMdCLf3UavnWYQhQ90TK6yenQr/exec';
+export const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx32lPR8_bJXcAKSe6cJv1bvkNA_dqXlszygzZbL1f8Bslh93wGSgOYEvUQnY9YHq8U/exec';
 
 // Mock Data based on the PDF & brand style (for fallback)
 const MOCK_DATA = [
@@ -131,7 +131,7 @@ const MOCK_DATA = [
  * if there is a network error, or if it returns an empty array.
  */
 export async function fetchAllData(customUrl = null) {
-  const targetUrl = customUrl || localStorage.getItem('gdrive_apps_script_url') || APPS_SCRIPT_URL;
+  const targetUrl = customUrl || APPS_SCRIPT_URL;
   
   if (!targetUrl) {
     console.log('No Web App URL provided, returning mock data.');

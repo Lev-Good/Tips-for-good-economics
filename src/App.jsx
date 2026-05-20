@@ -58,8 +58,10 @@ function App() {
     return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   });
 
-  // Google Apps Script Web App URL
-  const [appsScriptUrl, setAppsScriptUrl] = useState(() => localStorage.getItem('gdrive_apps_script_url') || APPS_SCRIPT_URL);
+  // Clear any old stored URL to ensure it always uses the new hardcoded one
+  useEffect(() => {
+    localStorage.removeItem('gdrive_apps_script_url');
+  }, []);
   
   // App States (Entire tree is loaded in categories)
   const [categories, setCategories] = useState([]);
@@ -68,15 +70,11 @@ function App() {
   
   // Loading & UI States
   const [loading, setLoading] = useState(false);
-  const [showSettings, setShowSettings] = useState(false);
   const [showHelpAlert, setShowHelpAlert] = useState(false);
   
   // Modal Previews
   const [previewFile, setPreviewFile] = useState(null);
   const [activeMockArticleIndex, setActiveMockArticleIndex] = useState(0);
-  
-  // Form state for settings modal
-  const [formUrl, setFormUrl] = useState(appsScriptUrl);
 
   // Apply Theme
   useEffect(() => {
@@ -89,14 +87,14 @@ function App() {
     const loadAllData = async () => {
       setLoading(true);
       try {
-        const fetchedData = await fetchAllData(appsScriptUrl);
+        const fetchedData = await fetchAllData();
         setCategories(fetchedData);
         if (fetchedData && fetchedData.length > 0) {
           setActiveCategory(fetchedData[0]);
           
           // Check if it's using the fallback mock data
           const isMockData = fetchedData[0]?.id?.startsWith('cat-');
-          if (isMockData && appsScriptUrl !== APPS_SCRIPT_URL) {
+          if (isMockData) {
             setShowHelpAlert(true);
           } else {
             setShowHelpAlert(false);
@@ -110,21 +108,9 @@ function App() {
     };
 
     loadAllData();
-  }, [appsScriptUrl]);
+  }, []);
 
-  // Handle Settings Save
-  const handleSaveSettings = (e) => {
-    e.preventDefault();
-    setAppsScriptUrl(formUrl);
-    
-    if (formUrl && formUrl !== APPS_SCRIPT_URL) {
-      localStorage.setItem('gdrive_apps_script_url', formUrl);
-    } else {
-      localStorage.removeItem('gdrive_apps_script_url');
-    }
-    
-    setShowSettings(false);
-  };
+
 
   const toggleTheme = () => {
     setTheme(prev => prev === 'light' ? 'dark' : 'light');
@@ -170,20 +156,6 @@ function App() {
           </div>
           
           <div className="header-actions">
-            <button 
-              className="settings-btn" 
-              onClick={() => {
-                setFormUrl(appsScriptUrl);
-                setShowSettings(true);
-              }}
-              title="הגדרות חיבור לדרייב"
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="3"></circle>
-                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-              </svg>
-            </button>
-            
             <button className="theme-toggle" onClick={toggleTheme} title="שינוי מצב עיצוב">
               {theme === 'light' ? (
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -315,7 +287,8 @@ function App() {
               </span>
             </div>
 
-            <div className="files-grid">
+            <div className="files-scroll-container">
+              <div className="files-grid">
               {loading ? (
                 Array(3).fill(0).map((_, i) => (
                   <div key={i} className="glass-card file-card skeleton">
@@ -414,6 +387,7 @@ function App() {
                 ))
               )}
             </div>
+            </div>
           </div>
         </section>
 
@@ -477,36 +451,7 @@ function App() {
         </div>
       </footer>
 
-      {/* Settings Modal */}
-      {showSettings && (
-        <div className="modal-overlay" style={{ backdropFilter: 'blur(8px)' }}>
-          <div className="modal-content glass-card animate-fade-in">
-            <button className="modal-close" onClick={() => setShowSettings(false)}>✕</button>
-            <h2 className="modal-title">הגדרות חיבור ל-Google Drive</h2>
-            <p className="modal-subtitle">חבר את האתר לקישור ה-Apps Script האישי שלך כדי לטעון קבצים אמיתיים בזמן אמת ללא מפתחות API.</p>
-            
-            <form onSubmit={handleSaveSettings}>
-              <div className="form-group">
-                <label className="form-label">קישור אפליקציית האינטרנט (Web App URL)</label>
-                <input 
-                  type="text" 
-                  className="form-input"
-                  placeholder="הדבק את הקישור שקיבלת מגוגל..."
-                  value={formUrl}
-                  onChange={(e) => setFormUrl(e.target.value)}
-                  required
-                />
-                <span className="form-help">הקישור שנוצר ב-Google Apps Script לאחר לחיצה על Deploy (מתחיל ב-https://script.google.com).</span>
-              </div>
 
-              <div className="modal-actions">
-                <button type="button" className="btn-secondary" onClick={() => setShowSettings(false)}>ביטול</button>
-                <button type="submit" className="btn-primary">שמור והתחבר</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
 
       {/* PDF / File Preview Modal */}
       {previewFile && (
@@ -571,15 +516,18 @@ function App() {
                   </div>
                 </div>
               ) : (
-                /* Google Drive real iframe PDF preview */
-                <iframe 
-                  src={`https://drive.google.com/file/d/${previewFile.id}/preview`} 
-                  width="100%" 
-                  height="100%" 
-                  style={{ border: 'none' }}
-                  allow="autoplay"
-                  title="תצוגה מקדימה"
-                />
+                /* Google Drive real iframe PDF preview with touch and desktop scroll wrapper */
+                <div className="iframe-scroll-wrapper" style={{ width: '100%', height: '100%', overflow: 'auto', WebkitOverflowScrolling: 'touch' }}>
+                  <iframe 
+                    src={`https://drive.google.com/file/d/${previewFile.id}/preview`} 
+                    width="100%" 
+                    height="100%" 
+                    style={{ border: 'none', display: 'block' }}
+                    scrolling="yes"
+                    allow="autoplay"
+                    title="תצוגה מקדימה"
+                  />
+                </div>
               )}
             </div>
             
@@ -587,6 +535,23 @@ function App() {
               <span className="file-size" style={{ fontSize: '13px' }}>גודל הקובץ: {formatBytes(previewFile.size)}</span>
               <div style={{ display: 'flex', gap: '12px' }}>
                 <button className="btn-secondary" onClick={() => setPreviewFile(null)}>סגור</button>
+                {previewFile.webViewLink && previewFile.webViewLink !== '#' && (
+                  <a 
+                    href={previewFile.webViewLink} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="btn-secondary" 
+                    style={{ padding: '8px 20px', borderRadius: '8px', fontSize: '14px', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+                    title="פתח במסך מלא בכרטיסייה חדשה"
+                  >
+                    <span>פתח במסך מלא</span>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                      <polyline points="15 3 21 3 21 9"></polyline>
+                      <line x1="10" y1="14" x2="21" y2="3"></line>
+                    </svg>
+                  </a>
+                )}
                 {previewFile.webContentLink && previewFile.webContentLink !== '#' && (
                   <a href={previewFile.webContentLink} className="btn-primary" style={{ padding: '8px 20px', borderRadius: '8px', fontSize: '14px' }}>הורד קובץ</a>
                 )}

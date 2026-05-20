@@ -824,5 +824,50 @@
   .community-cta {
     grid-template-columns: 1fr;
     gap: 24px;
+}
+
+/* Scrollable files grid container for keeping page height tidy */
+.files-scroll-container {
+  max-height: 680px;
+  overflow-y: auto;
+  padding-left: 12px;
+  scroll-behavior: smooth;
+  /* Thin scrollbar for premium look */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(12, 108, 68, 0.35) transparent;
+}
+
+/* Chrome, Edge, and Safari scrollbar styles */
+.files-scroll-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.files-scroll-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.files-scroll-container::-webkit-scrollbar-thumb {
+  background-color: rgba(12, 108, 68, 0.35);
+  border-radius: 20px;
+  transition: background-color var(--transition-fast);
+}
+
+.files-scroll-container::-webkit-scrollbar-thumb:hover {
+  background-color: var(--primary);
+}
+
+[data-theme="dark"] .files-scroll-container::-webkit-scrollbar-thumb {
+  background-color: rgba(251, 191, 36, 0.3);
+}
+
+[data-theme="dark"] .files-scroll-container::-webkit-scrollbar-thumb:hover {
+  background-color: var(--accent);
+}
+
+@media (max-width: 1024px) {
+  .files-scroll-container {
+    max-height: none; /* Let it expand naturally on mobile for native scroll */
+    padding-left: 0;
+    overflow-y: visible;
   }
 }
