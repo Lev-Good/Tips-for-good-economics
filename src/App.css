@@ -863,11 +863,84 @@
 [data-theme="dark"] .files-scroll-container::-webkit-scrollbar-thumb:hover {
   background-color: var(--accent);
 }
-
-@media (max-width: 1024px) {
+@media (max-width: 768px) {
   .files-scroll-container {
-    max-height: none; /* Let it expand naturally on mobile for native scroll */
-    padding-left: 0;
-    overflow-y: visible;
+    max-height: 480px; /* Slightly shorter on mobile for excellent navigation */
+    padding-left: 6px;
+  }
+}
+
+/* Footer credit styling */
+.footer-credit-link {
+  color: var(--primary);
+  font-weight: 700;
+  text-decoration: none;
+  border-bottom: 1.5px dashed var(--primary);
+  transition: all var(--transition-fast);
+}
+
+.footer-credit-link:hover {
+  color: var(--primary-light);
+  border-bottom-style: solid;
+}
+
+[data-theme="dark"] .footer-credit-link {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+[data-theme="dark"] .footer-credit-link:hover {
+  color: #ffffff;
+  border-bottom-color: #ffffff;
+}
+
+/* Custom styles for landing page inspired sections */
+.feature-item-card {
+  transition: all var(--transition-normal);
+}
+
+.feature-item-card:hover {
+  transform: translateY(-5px);
+}
+
+.topic-card {
+  padding: 24px;
+  background: var(--glass-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  text-align: center;
+  transition: all var(--transition-normal);
+  cursor: default;
+}
+
+.topic-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--primary) !important;
+  box-shadow: var(--shadow-md);
+  background: rgba(12, 108, 68, 0.05) !important;
+}
+
+[data-theme="dark"] .topic-card:hover {
+  border-color: var(--accent) !important;
+  background: rgba(251, 191, 36, 0.05) !important;
+}
+
+/* Responsive adjustment for new grid systems */
+@media (max-width: 1024px) {
+  .topics-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  .features-grid-layout {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .topics-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .stats-banner {
+    grid-template-columns: 1fr !important;
   }
 }
