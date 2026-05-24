@@ -141,7 +141,7 @@ function App() {
       <header className="app-header">
         <div className="header-content">
           <div className="header-brand" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            <img src="/logo.svg" alt="לוגו טיפים לכלכלה נכונה" className="header-logo" style={{ height: '54px', width: 'auto', display: 'block' }} />
+            <img src="logo.svg" alt="לוגו טיפים לכלכלה נכונה" className="header-logo" style={{ height: '54px', width: 'auto', display: 'block' }} />
             <div className="header-title-wrapper">
               <span className="brand-name">טיפים לכלכלה נכונה</span>
               <span className="brand-subtitle">הקהילה החרדית הגדולה לחסכון והתנהלות כלכלית</span>
@@ -564,7 +564,7 @@ function App() {
       {/* Footer */}
       <footer className="app-footer">
         <div className="footer-content">
-          <img src="/logo.svg" alt="לוגו טיפים לכלכלה נכונה" className="footer-logo" style={{ height: '40px', width: 'auto', display: 'block', opacity: 0.8 }} />
+          <img src="logo.svg" alt="לוגו טיפים לכלכלה נכונה" className="footer-logo" style={{ height: '40px', width: 'auto', display: 'block', opacity: 0.8 }} />
           <p className="footer-text">
             © {new Date().getFullYear()} טיפים לכלכלה נכונה. כל הזכויות שמורות. <br/>
             המידע מוגש כעזר ואינו מהווה תחליף לייעוץ פיננסי מקצועי המותאם אישית. <br/>
