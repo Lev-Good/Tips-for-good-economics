@@ -5,7 +5,7 @@ import {
   Eye, BellOff, ShoppingBag, PieChart, 
   ShoppingCart, Home, Building2, TrendingUp, 
   Briefcase, AlertTriangle, Globe,
-  Search, ChevronLeft, Download
+  Search, ChevronLeft, Download, Maximize2, Minimize2
 } from 'lucide-react';
 import { 
   fetchAllData, 
@@ -103,6 +103,20 @@ function App() {
   // Selected File for In-App Viewer
   const [selectedFile, setSelectedFile] = useState(null);
   const [activeMockArticleIndex, setActiveMockArticleIndex] = useState(0);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [readerFontSize, setReaderFontSize] = useState(16);
+
+  const handleSelectFile = (file) => {
+    setSelectedFile(file);
+    setActiveMockArticleIndex(0);
+    setIsSidebarCollapsed(true); // Auto collapse sidebar for focused reading
+    setReaderFontSize(16); // Reset font size
+  };
+
+  const handleBackToHome = () => {
+    setSelectedFile(null);
+    setIsSidebarCollapsed(false); // Restore sidebar
+  };
 
   // Apply Theme
   useEffect(() => {
@@ -277,7 +291,7 @@ function App() {
         </section>
 
         {/* Integrated Library Layout */}
-        <section className="library-layout">
+        <section className={`library-layout ${isSidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
           
           {/* Right Sidebar: Books, categories, and name filter */}
           <aside className="library-sidebar glass-card">
@@ -319,7 +333,7 @@ function App() {
               </div>
             </div>
 
-            {/* List of files in active category, filtered by name search */}
+                {/* List of files in active category, filtered by name search */}
             <ul className="library-file-list">
               {loading ? (
                 Array(5).fill(0).map((_, i) => (
@@ -335,10 +349,7 @@ function App() {
                   <li key={file.id}>
                     <button 
                       className={`file-list-item ${selectedFile?.id === file.id ? 'active' : ''}`}
-                      onClick={() => {
-                        setSelectedFile(file);
-                        setActiveMockArticleIndex(0);
-                      }}
+                      onClick={() => handleSelectFile(file)}
                     >
                       <div className="file-item-info">
                         <span className="file-item-name">{file.name}</span>
@@ -371,7 +382,11 @@ function App() {
                   </div>
                   
                   <div className="viewer-actions">
-                    <button className="btn-secondary" onClick={() => setSelectedFile(null)}>
+                    <button className="btn-secondary toggle-sidebar-btn" onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)} title={isSidebarCollapsed ? "הצג סרגל צד" : "תצוגה מלאה"}>
+                      {isSidebarCollapsed ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
+                      <span>{isSidebarCollapsed ? "הצג סרגל צד" : "תצוגה מלאה"}</span>
+                    </button>
+                    <button className="btn-secondary" onClick={handleBackToHome}>
                       <Home size={16} />
                       <span>חזרה למסך הבית</span>
                     </button>
@@ -414,11 +429,39 @@ function App() {
                       
                       {/* Article content view */}
                       <div className="reader-content-body">
+                        {/* Font size control bar */}
+                        <div className="reader-font-controls">
+                          <span className="font-controls-label">גודל גופן:</span>
+                          <button 
+                            className="font-btn" 
+                            onClick={() => setReaderFontSize(prev => Math.min(26, prev + 2))} 
+                            title="הגדל גופן"
+                          >
+                            A+
+                          </button>
+                          <button 
+                            className="font-btn" 
+                            onClick={() => setReaderFontSize(prev => Math.max(12, prev - 2))} 
+                            title="הקטן גופן"
+                          >
+                            A-
+                          </button>
+                          <button 
+                            className="font-btn reset-btn" 
+                            onClick={() => setReaderFontSize(16)} 
+                            title="איפוס גופן"
+                          >
+                            איפוס
+                          </button>
+                        </div>
+
                         <div className="reader-content-wrapper">
                           <span className="hero-tag article-role">{MOCK_ARTICLES[activeMockArticleIndex].role}</span>
                           <h3 className="article-title">{MOCK_ARTICLES[activeMockArticleIndex].title}</h3>
                           <h4 className="article-author">מאת: {MOCK_ARTICLES[activeMockArticleIndex].author}</h4>
-                          <p className="article-paragraph">{MOCK_ARTICLES[activeMockArticleIndex].content}</p>
+                          <p className="article-paragraph" style={{ fontSize: `${readerFontSize}px` }}>
+                            {MOCK_ARTICLES[activeMockArticleIndex].content}
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -483,9 +526,7 @@ function App() {
                                 <button 
                                   className="btn-card-primary"
                                   onClick={() => {
-                                    // Select this file
-                                    setSelectedFile(result);
-                                    setActiveMockArticleIndex(0);
+                                    handleSelectFile(result);
                                     // Set category active
                                     const cat = categories.find(c => c.name === result.categoryName);
                                     if (cat) setActiveCategory(cat);
@@ -542,7 +583,7 @@ function App() {
                       </div>
                     ) : (
                       filteredFilesByName.map(file => (
-                        <div key={file.id} className="dashboard-guide-card glass-card" onClick={() => setSelectedFile(file)}>
+                        <div key={file.id} className="dashboard-guide-card glass-card" onClick={() => handleSelectFile(file)}>
                           <div className="guide-card-icon">
                             <BookOpen size={24} />
                           </div>
