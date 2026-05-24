@@ -104,7 +104,7 @@ function parseFile(file) {
     thumbnailLink: "https://drive.google.com/thumbnail?id=" + file.getId() + "&sz=w600",
     modifiedTime: file.getLastUpdated().toISOString(),
     size: file.getSize().toString(),
-    description: desc || "קובץ מקצועי מתוך קהילת טיפים לכלכלה נכונה.",
+    description: desc || "",
     author: author
   };
 }
