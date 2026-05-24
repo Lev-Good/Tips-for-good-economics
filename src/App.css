@@ -917,45 +917,257 @@
   border-bottom-color: #ffffff;
 }
 
-/* Custom styles for landing page inspired sections */
-.feature-item-card {
+/* ==========================================================================
+   ⭐ PREMIUM LUXURY UPGRADE - MODERN STATE-OF-THE-ART AESTHETICS ⭐
+   ========================================================================== */
+
+/* 1. Global Custom Premium Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 167, 107, 0.15);
+  border-radius: 20px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+  transition: background-color var(--transition-fast);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+  border-radius: 20px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: rgba(251, 191, 36, 0.2);
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
+
+/* 2. Premium Sticky Glassmorphic Header */
+.app-header {
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.01), 0 1px 0 rgba(0, 167, 107, 0.06);
+  border-bottom: 1px solid var(--glass-border) !important;
   transition: all var(--transition-normal);
+}
+
+/* 3. Hero CTA Buttons Micro-interactions */
+.hero-cta-buttons a {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.hero-cta-buttons a:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 12px 24px -6px rgba(0, 167, 107, 0.3) !important;
+}
+
+.hero-cta-buttons .btn-accent:hover {
+  box-shadow: 0 12px 24px -6px rgba(251, 191, 36, 0.4) !important;
+}
+
+/* 4. Unified Pill Statistics Banner (Elementor Replication) */
+.stats-banner {
+  box-shadow: 0 15px 35px -15px rgba(0, 167, 107, 0.08);
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(0, 167, 107, 0.18) !important;
+}
+
+.stats-banner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.03) 0%, rgba(0, 167, 107, 0.03) 100%);
+  pointer-events: none;
+}
+
+/* 5. Highly Premium Feature Item Cards */
+.feature-item-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 24px;
+  padding: 36px 28px !important;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .feature-item-card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-8px);
+  border-color: var(--primary);
+  background: var(--glass-bg);
+  box-shadow: 0 20px 40px -15px rgba(0, 167, 107, 0.12), 0 12px 20px -10px rgba(0, 167, 107, 0.08);
 }
 
+[data-theme="dark"] .feature-item-card:hover {
+  border-color: var(--accent);
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.4);
+}
+
+/* 6. Elegant Interactive Topic Covered Grid Cards */
 .topic-card {
-  padding: 24px;
-  background: var(--glass-bg);
+  padding: 28px 20px;
+  background: var(--card-bg);
   border: 1px solid var(--card-border);
-  border-radius: 16px;
+  border-radius: 20px;
   text-align: center;
-  transition: all var(--transition-normal);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   cursor: default;
+  box-shadow: var(--shadow-sm);
 }
 
 .topic-card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-6px);
   border-color: var(--primary) !important;
-  box-shadow: var(--shadow-md);
-  background: rgba(12, 108, 68, 0.05) !important;
+  box-shadow: 0 15px 30px -10px rgba(0, 167, 107, 0.15);
+  background: rgba(0, 167, 107, 0.05) !important;
 }
 
 [data-theme="dark"] .topic-card:hover {
   border-color: var(--accent) !important;
-  background: rgba(251, 191, 36, 0.05) !important;
+  box-shadow: 0 15px 30px -10px rgba(251, 191, 36, 0.12);
+  background: rgba(251, 191, 36, 0.06) !important;
 }
 
-/* Responsive adjustment for new grid systems */
+/* 7. Extremely Premium File Card Lifting Hover & Glow */
+.file-card {
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: 24px !important;
+  border: 1px solid var(--card-border);
+}
+
+.file-card:hover {
+  transform: translateY(-8px);
+  border-color: rgba(0, 167, 107, 0.35);
+  box-shadow: 0 25px 50px -12px rgba(0, 167, 107, 0.15), 0 15px 20px -15px rgba(0, 167, 107, 0.08);
+}
+
+[data-theme="dark"] .file-card:hover {
+  border-color: rgba(251, 191, 36, 0.4);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.file-preview {
+  border-top-left-radius: 24px;
+  border-top-right-radius: 24px;
+}
+
+/* 8. Elegant Glassmorphism Category Sidebar Panel */
+.sidebar-panel {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 24px;
+  padding: 28px;
+  box-shadow: var(--shadow-sm);
+  height: fit-content;
+}
+
+.sidebar-title {
+  font-size: 16px;
+  border-bottom: 2px solid rgba(0, 167, 107, 0.1);
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+}
+
+.category-item {
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-weight: 700;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.category-item:hover {
+  background: rgba(0, 167, 107, 0.06);
+  border-color: rgba(0, 167, 107, 0.15);
+  transform: translateX(-4px);
+}
+
+[data-theme="dark"] .category-item:hover {
+  background: rgba(251, 191, 36, 0.06);
+  border-color: rgba(251, 191, 36, 0.15);
+}
+
+.category-item.active {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  box-shadow: 0 8px 20px -6px rgba(0, 167, 107, 0.3);
+}
+
+[data-theme="dark"] .category-item.active {
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+  box-shadow: 0 8px 20px -6px rgba(251, 191, 36, 0.3);
+}
+
+/* 9. Search Bar Custom Glassmorphic Ring */
+.search-input {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 167, 107, 0.15);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.01), 0 10px 30px -10px rgba(0, 167, 107, 0.05);
+}
+
+.search-input:focus {
+  border-color: var(--primary);
+  background: #ffffff;
+  box-shadow: 0 0 0 4px rgba(0, 167, 107, 0.15), 0 10px 30px -10px rgba(0, 167, 107, 0.1);
+}
+
+[data-theme="dark"] .search-input {
+  background: rgba(0, 20, 12, 0.6);
+  border-color: rgba(0, 167, 107, 0.25);
+}
+
+[data-theme="dark"] .search-input:focus {
+  border-color: var(--accent);
+  background: rgba(0, 20, 12, 0.85);
+  box-shadow: 0 0 0 4px rgba(251, 191, 36, 0.2), 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+}
+
+/* 10. Multi-device Layout Tweaks & Grid Responsiveness */
 @media (max-width: 1024px) {
   .topics-grid {
     grid-template-columns: repeat(2, 1fr) !important;
+    gap: 16px !important;
   }
+  
   .features-grid-layout {
     grid-template-columns: 1fr !important;
     gap: 20px !important;
+  }
+  
+  .sidebar-panel {
+    padding: 16px;
+    margin-bottom: 8px;
+  }
+  
+  .category-list {
+    flex-direction: row;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    gap: 8px;
+  }
+  
+  .category-item {
+    white-space: nowrap;
+    width: auto;
+  }
+  
+  .category-item:hover {
+    transform: none;
   }
 }
 
@@ -963,7 +1175,11 @@
   .topics-grid {
     grid-template-columns: 1fr !important;
   }
+  
   .stats-banner {
     grid-template-columns: 1fr !important;
+    border-radius: 24px !important; /* Elegant card on mobile instead of pill */
+    padding: 24px !important;
   }
 }
+

@@ -407,7 +407,7 @@ function App() {
                 </div>
               ) : (
                 filteredFiles.map(file => (
-                  <article key={file.id} className="glass-card file-card animate-fade-in">
+                  <article key={file.id} className="glass-card file-card animate-fade-in" onClick={() => setPreviewFile(file)} style={{ cursor: 'pointer' }}>
                     <div className="file-preview">
                       {file.thumbnailLink ? (
                         <img 
@@ -443,7 +443,7 @@ function App() {
                         <span className="file-size">{formatBytes(file.size)}</span>
                         <div className="file-actions">
                           <button 
-                            onClick={() => setPreviewFile(file)}
+                            onClick={(e) => { e.stopPropagation(); setPreviewFile(file); }}
                             className="btn-icon-only"
                             title="צפייה פנימית באתר"
                           >
@@ -456,6 +456,7 @@ function App() {
                           {file.webContentLink && file.webContentLink !== '#' ? (
                             <a 
                               href={file.webContentLink} 
+                              onClick={(e) => e.stopPropagation()}
                               className="btn-card-primary"
                               title="הורדת קובץ"
                             >
@@ -469,7 +470,7 @@ function App() {
                           ) : (
                             <button 
                               className="btn-card-primary" 
-                              onClick={() => alert('קבצי דמה אינם ניתנים להורדה אמיתית. בעת העלאת קבצים אמיתיים לדרייב, כפתור זה יוריד אותם מיידית!')}
+                              onClick={(e) => { e.stopPropagation(); alert('קבצי דמה אינם ניתנים להורדה אמיתית. בעת העלאת קבצים אמיתיים לדרייב, כפתור זה יוריד אותם מיידית!'); }}
                             >
                               <span>הורדה</span>
                               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">

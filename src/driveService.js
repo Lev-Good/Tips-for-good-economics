@@ -172,7 +172,7 @@ export async function fetchAllData(customUrl = null) {
         thumbnailLink: file.thumbnailLink ? file.thumbnailLink.replace('=s220', '=s600') : null,
         modifiedTime: file.modifiedTime || new Date().toISOString(),
         size: file.size || '0',
-        description: file.description || 'קובץ מקצועי מתוך קהילת טיפים לכלכלה נכונה.',
+        description: file.description || '',
         author: file.author || 'מערכת כלכלה נכונה'
       }))
     }));
