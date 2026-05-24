@@ -131,6 +131,22 @@ const MOCK_DATA = [
  * if there is a network error, or if it returns an empty array.
  */
 export async function fetchAllData(customUrl = null) {
+  // 1. Try to fetch the local pre-synchronized static drive-data.json
+  try {
+    const baseUrl = import.meta.env.BASE_URL || '/';
+    console.log('Attempting to fetch pre-synchronized static data from:', baseUrl + 'drive-data.json');
+    const staticRes = await fetch(baseUrl + 'drive-data.json');
+    if (staticRes.ok) {
+      const staticData = await staticRes.json();
+      if (staticData && staticData.length > 0) {
+        console.log('✅ Loaded pre-synchronized data from GitHub Pages successfully!');
+        return staticData;
+      }
+    }
+  } catch (err) {
+    console.log('Static data fetch failed or not found, falling back to live fetch.', err.message);
+  }
+
   const targetUrl = customUrl || APPS_SCRIPT_URL;
   
   if (!targetUrl) {

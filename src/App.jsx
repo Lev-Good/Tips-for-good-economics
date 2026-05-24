@@ -58,11 +58,32 @@ function App() {
     return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   });
 
+  // Load search index at startup for full-text search
+  useEffect(() => {
+    const loadSearchIndex = async () => {
+      try {
+        const baseUrl = import.meta.env.BASE_URL || '/';
+        const res = await fetch(baseUrl + 'search-index.json');
+        if (res.ok) {
+          const indexData = await res.json();
+          setSearchIndex(indexData);
+          console.log('✅ Successfully loaded full-text search index!');
+        }
+      } catch (err) {
+        console.log('Full-text search index not found (this is normal in development).', err.message);
+      }
+    };
+    loadSearchIndex();
+  }, []);
+
   // Clear any old stored URL to ensure it always uses the new hardcoded one
   useEffect(() => {
     localStorage.removeItem('gdrive_apps_script_url');
   }, []);
   
+  // Search Index state for full-text PDF search
+  const [searchIndex, setSearchIndex] = useState([]);
+
   // App States (Entire tree is loaded in categories)
   const [categories, setCategories] = useState([]);
   const [activeCategory, setActiveCategory] = useState(null);
@@ -119,15 +140,59 @@ function App() {
   // Get all files from active category
   const activeFiles = activeCategory ? activeCategory.files : [];
 
-  // Filter files based on search query
-  const filteredFiles = activeFiles.filter(file => {
-    const query = searchQuery.toLowerCase();
-    return (
-      file.name.toLowerCase().includes(query) ||
-      (file.description && file.description.toLowerCase().includes(query)) ||
-      (file.author && file.author.toLowerCase().includes(query))
-    );
-  });
+  // Filter files based on search query (Global Full-Text Search across all categories!)
+  const filteredFiles = React.useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+    if (!query) {
+      return activeCategory ? activeCategory.files : [];
+    }
+
+    const matchingIds = new Set();
+    const fileHighlights = {};
+
+    if (searchIndex && searchIndex.length > 0) {
+      searchIndex.forEach(item => {
+        const matchName = item.name && item.name.toLowerCase().includes(query);
+        const matchDesc = item.description && item.description.toLowerCase().includes(query);
+        const matchAuthor = item.author && item.author.toLowerCase().includes(query);
+        const matchText = item.text && item.text.toLowerCase().includes(query);
+
+        if (matchName || matchDesc || matchAuthor || matchText) {
+          matchingIds.add(item.id);
+          
+          if (matchText && !matchName && !matchDesc) {
+            const textLower = item.text.toLowerCase();
+            const idx = textLower.indexOf(query);
+            const start = Math.max(0, idx - 40);
+            const end = Math.min(item.text.length, idx + query.length + 40);
+            fileHighlights[item.id] = '..."' + item.text.slice(start, end).trim() + '"...';
+          }
+        }
+      });
+    }
+
+    const allFiles = [];
+    categories.forEach(cat => {
+      if (cat.files) {
+        cat.files.forEach(file => {
+          const isMatch = matchingIds.has(file.id) || 
+            file.name.toLowerCase().includes(query) ||
+            (file.description && file.description.toLowerCase().includes(query)) ||
+            (file.author && file.author.toLowerCase().includes(query));
+
+          if (isMatch) {
+            allFiles.push({
+              ...file,
+              categoryName: cat.name,
+              searchHighlight: fileHighlights[file.id] || null
+            });
+          }
+        });
+      }
+    });
+
+    return allFiles;
+  }, [searchQuery, activeCategory, categories, searchIndex]);
 
   // Calculate total files
   const totalFilesCount = categories.reduce((acc, cat) => acc + (cat.files ? cat.files.length : 0), 0);
@@ -431,6 +496,11 @@ function App() {
                     </div>
 
                     <div className="file-info">
+                      {file.categoryName && (
+                        <span className="file-category-badge" style={{ background: 'rgba(0, 167, 107, 0.08)', color: 'var(--primary)', padding: '4px 10px', borderRadius: '20px', fontSize: '11px', fontWeight: 'bold', width: 'fit-content', marginBottom: '10px', display: 'inline-block' }}>
+                          {file.categoryName}
+                        </span>
+                      )}
                       <div className="file-meta-top">
                         <span className="file-author">מאת: {file.author}</span>
                         <time>{new Date(file.modifiedTime).toLocaleDateString('he-IL')}</time>
@@ -438,6 +508,11 @@ function App() {
                       
                       <h3 className="file-title" title={file.name}>{file.name}</h3>
                       <p className="file-description">{file.description}</p>
+                      {file.searchHighlight && (
+                        <div className="search-highlight" style={{ fontSize: '12px', background: 'rgba(251, 191, 36, 0.1)', border: '1px solid rgba(251, 191, 36, 0.2)', padding: '6px 12px', borderRadius: '8px', color: 'var(--text-secondary)', fontStyle: 'italic', marginTop: '10px', direction: 'rtl' }}>
+                          <strong>נמצא בטקסט:</strong> {file.searchHighlight}
+                        </div>
+                      )}
                       
                       <div className="file-footer">
                         <span className="file-size">{formatBytes(file.size)}</span>
@@ -644,7 +719,7 @@ function App() {
                 /* Google Drive real iframe PDF preview with touch and desktop scroll wrapper */
                 <div className="iframe-scroll-wrapper" style={{ width: '100%', height: '100%', overflow: 'auto', WebkitOverflowScrolling: 'touch' }}>
                   <iframe 
-                    src={`https://drive.google.com/file/d/${previewFile.id}/preview`} 
+                    src={previewFile.localUrl ? `${import.meta.env.BASE_URL || '/'}${previewFile.localUrl}` : `https://drive.google.com/file/d/${previewFile.id}/preview`} 
                     width="100%" 
                     height="100%" 
                     style={{ border: 'none', display: 'block' }}

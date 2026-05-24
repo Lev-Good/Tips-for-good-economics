@@ -24,7 +24,7 @@ dist-ssr
 *.sw?
 
 # Original resource documents and scratch files
-*.pdf
-*.txt
+/*.pdf
+/*.txt
 לוגו/
 scratch/
