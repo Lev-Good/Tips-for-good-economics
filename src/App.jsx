@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
 import { 
+  Users, BookOpen, MessageCircle, GraduationCap, 
+  Eye, BellOff, ShoppingBag, PieChart, 
+  ShoppingCart, Home, Building2, TrendingUp, 
+  Briefcase, AlertTriangle, Globe 
+} from 'lucide-react';
+import { 
   fetchAllData, 
   formatBytes,
   APPS_SCRIPT_URL 
@@ -242,32 +248,29 @@ function App() {
         
         {/* Help Alert */}
         {showHelpAlert && (
-          <div className="glass-card animate-fade-in" style={{ padding: '16px 24px', background: 'rgba(251, 191, 36, 0.1)', border: '1px solid rgba(251, 191, 36, 0.4)', borderRadius: '12px', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <span style={{ fontSize: '20px' }}>⚠️</span>
-            <p style={{ fontSize: '14px', color: 'var(--text-primary)', margin: 0 }}>
+          <div className="glass-card help-alert animate-fade-in">
+            <AlertTriangle className="alert-icon" size={24} />
+            <p>
               <strong>החיבור בוצע:</strong> ה-Apps Script פועל, אך התיקייה בדרייב ריקה או שאין בה הרשאות שיתוף פומביות. האתר מציג כעת <strong>נתוני דמה פרימיום</strong> (המגזין שלכם גליון 53). ברגע שתעלו קבצים פומביים לדרייב – הם יופיעו כאן אוטומטית!
             </p>
           </div>
         )}
 
         {/* Hero Section */}
-        <section className="hero-section glass-card animate-fade-in" style={{ padding: '60px 40px', background: 'radial-gradient(circle at 10% 20%, rgba(12, 108, 68, 0.08) 0%, rgba(251, 191, 36, 0.05) 90%)', position: 'relative', overflow: 'hidden' }}>
+        <section className="hero-section glass-card animate-fade-in">
           <span className="hero-tag">קבוצת הטיפים הגדולה במגזר החרדי</span>
-          <h1 className="hero-title" style={{ fontFamily: 'var(--font-heading)', fontSize: '42px', fontWeight: '900', color: 'var(--text-primary)', marginBottom: '16px' }}>טיפים לכלכלה נכונה</h1>
-          <p className="hero-subtitle" style={{ fontSize: '18px', color: 'var(--text-secondary)', maxWidth: '800px', margin: '0 auto 32px auto', lineHeight: '1.6' }}>
+          <h1 className="hero-title">טיפים לכלכלה נכונה</h1>
+          <p className="hero-subtitle">
             בגובה העיניים, בצורה רהוטה, ברורה וממוקדת. מידע וכלים פרקטיים שישנו את הדרך שבה אתם מנהלים את הכסף שלכם, עם טיפים מקצועיים שיכולים לחסוך לכם אלפי שקלים בחודש.
           </p>
 
-          <div className="hero-cta-buttons" style={{ display: 'flex', justifyContent: 'center', gap: '16px', flexWrap: 'wrap', marginBottom: '32px' }}>
-            <a href="https://mesudarim.chatfree.app/" target="_blank" rel="noopener noreferrer" className="btn-accent" style={{ textDecoration: 'none' }}>
+          <div className="hero-cta-buttons">
+            <a href="https://mesudarim.chatfree.app/" target="_blank" rel="noopener noreferrer" className="btn-accent">
               <span>להצטרפות לקבוצה בצ'אט (בזמן אמת)</span>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="22" y1="2" x2="11" y2="13"></line>
-                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-              </svg>
+              <MessageCircle size={18} />
             </a>
             
-            <a href="mailto:nisanetzioni@gmail.com?subject=בקשת הצטרפות לקבוצת הטיפים בצ'אט (מנויי נטפרי)" className="btn-primary" style={{ background: 'var(--glass-bg)', color: 'var(--text-primary)', border: '1px solid var(--card-border)', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+            <a href="mailto:nisanetzioni@gmail.com?subject=בקשת הצטרפות לקבוצת הטיפים בצ'אט (מנויי נטפרי)" className="btn-secondary-outline">
               <span>בקשת הצטרפות לנטפרי (במייל)</span>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
@@ -275,7 +278,7 @@ function App() {
               </svg>
             </a>
 
-            <a href="tel:1700111212" className="btn-primary" style={{ background: 'var(--glass-bg)', color: 'var(--text-primary)', border: '1px solid var(--card-border)', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+            <a href="tel:1700111212" className="btn-secondary-outline">
               <span>שמיעה בטלפון: 1700-111-212</span>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
@@ -302,60 +305,66 @@ function App() {
         </section>
 
         {/* Stats Banner */}
-        <section className="stats-banner" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px', marginBottom: '50px' }}>
-          <div className="stat-card glass-card animate-fade-in" style={{ animationDelay: '0.1s' }}>
-            <span style={{ fontSize: '32px', marginBottom: '12px' }}>👥</span>
+        <section className="stats-banner glass-card">
+          <div className="stat-card animate-fade-in" style={{ animationDelay: '0.1s' }}>
+            <Users className="stat-icon" size={32} />
             <span className="stat-number">8,000+</span>
             <span className="stat-label">חברים הצטרפו לקבוצה עד כה</span>
           </div>
           
-          <div className="stat-card glass-card animate-fade-in" style={{ animationDelay: '0.2s' }}>
-            <span style={{ fontSize: '32px', marginBottom: '12px' }}>📚</span>
+          <div className="stat-card animate-fade-in" style={{ animationDelay: '0.2s' }}>
+            <BookOpen className="stat-icon" size={32} />
             <span className="stat-number">700+</span>
             <span className="stat-label">מאמרים וטיפים פורסמו</span>
           </div>
           
-          <div className="stat-card glass-card animate-fade-in" style={{ animationDelay: '0.3s' }}>
-            <span style={{ fontSize: '32px', marginBottom: '12px' }}>💬</span>
+          <div className="stat-card animate-fade-in" style={{ animationDelay: '0.3s' }}>
+            <MessageCircle className="stat-icon" size={32} />
             <span className="stat-number">2,500+</span>
             <span className="stat-label">פניות ושאלות שנענו בצ'אט</span>
           </div>
 
-          <div className="stat-card glass-card animate-fade-in" style={{ animationDelay: '0.4s' }}>
-            <span style={{ fontSize: '32px', marginBottom: '12px' }}>🎓</span>
+          <div className="stat-card animate-fade-in" style={{ animationDelay: '0.4s' }}>
+            <GraduationCap className="stat-icon" size={32} />
             <span className="stat-number">20+</span>
             <span className="stat-label">אנשי מקצוע שמנגישים מידע</span>
           </div>
         </section>
 
         {/* Why Join Us Section */}
-        <section className="features-section glass-card animate-fade-in" style={{ padding: '40px', marginBottom: '50px', background: 'radial-gradient(circle at 90% 10%, rgba(12, 108, 68, 0.03) 0%, rgba(251, 191, 36, 0.01) 90%)' }}>
-          <div className="section-header" style={{ textAlign: 'center', marginBottom: '40px' }}>
-            <span className="hero-tag" style={{ fontSize: '13px' }}>הערך המוביל שלנו</span>
-            <h2 className="section-title" style={{ fontFamily: 'var(--font-heading)', fontSize: '28px', fontWeight: '800', marginTop: '8px' }}>למה להצטרף לקהילה?</h2>
+        <section className="features-section glass-card animate-fade-in">
+          <div className="section-header">
+            <span className="hero-tag">הערך המוביל שלנו</span>
+            <h2 className="section-title">למה להצטרף לקהילה?</h2>
           </div>
           
-          <div className="features-grid-layout" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '30px' }}>
-            <div className="feature-item-card" style={{ textAlign: 'center', padding: '20px' }}>
-              <div className="feature-icon-circle" style={{ background: 'rgba(12, 108, 68, 0.1)', color: 'var(--primary)', width: '64px', height: '64px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px auto', fontSize: '24px' }}>👁️</div>
-              <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: '700', marginBottom: '10px', color: 'var(--text-primary)' }}>בגובה העיניים</h3>
-              <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: '1.6' }}>
+          <div className="features-grid-layout">
+            <div className="feature-item-card">
+              <div className="feature-icon-circle">
+                <Eye size={28} strokeWidth={2} />
+              </div>
+              <h3 className="feature-title">בגובה העיניים</h3>
+              <p className="feature-desc">
                 המידע בקבוצה מוגש בצורה רהוטה, ברורה וממוקדת שתשנה את הדרך שבה אתם מנהלים את הכסף שלכם, עם טיפים וכלים פרקטיים שיכולים לחסוך לכם אלפי שקלים בחודש.
               </p>
             </div>
 
-            <div className="feature-item-card" style={{ textAlign: 'center', padding: '20px' }}>
-              <div className="feature-icon-circle" style={{ background: 'rgba(12, 108, 68, 0.1)', color: 'var(--primary)', width: '64px', height: '64px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px auto', fontSize: '24px' }}>🤫</div>
-              <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: '700', marginBottom: '10px', color: 'var(--text-primary)' }}>קבוצה שקטה</h3>
-              <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: '1.6' }}>
+            <div className="feature-item-card">
+              <div className="feature-icon-circle">
+                <BellOff size={28} strokeWidth={2} />
+              </div>
+              <h3 className="feature-title">קבוצה שקטה</h3>
+              <p className="feature-desc">
                 אנחנו עושים הכל כדי לא לעייף את הקוראים בעומס אינפורמציה ומידע מיותר. כל התכנים והעלונים מפורסמים לאחר חשיבה, תכנון ובדיקה קפדנית בלבד.
               </p>
             </div>
 
-            <div className="feature-item-card" style={{ textAlign: 'center', padding: '20px' }}>
-              <div className="feature-icon-circle" style={{ background: 'rgba(12, 108, 68, 0.1)', color: 'var(--primary)', width: '64px', height: '64px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px auto', fontSize: '24px' }}>🛍️</div>
-              <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: '700', marginBottom: '10px', color: 'var(--text-primary)' }}>כוח צרכני חזק</h3>
-              <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: '1.6' }}>
+            <div className="feature-item-card">
+              <div className="feature-icon-circle">
+                <ShoppingBag size={28} strokeWidth={2} />
+              </div>
+              <h3 className="feature-title">כוח צרכני חזק</h3>
+              <p className="feature-desc">
                 באמצעות כוח הקנייה האיכותי של אלפי חברי הקהילה החרדית, אנו מכוונים ומובילים שורה של מיזמים ייחודיים להוזלת מחירים, עמלות ועלויות של מוצרים פיננסיים וצרכניים.
               </p>
             </div>
@@ -363,54 +372,54 @@ function App() {
         </section>
 
         {/* Topics Covered Section */}
-        <section className="topics-section glass-card animate-fade-in" style={{ padding: '40px', marginBottom: '50px' }}>
-          <div className="section-header" style={{ textAlign: 'center', marginBottom: '40px' }}>
-            <span className="hero-tag" style={{ fontSize: '13px' }}>תחומי התוכן והעלונים</span>
-            <h2 className="section-title" style={{ fontFamily: 'var(--font-heading)', fontSize: '28px', fontWeight: '800', marginTop: '8px' }}>מה תגלו בקהילה שיחסוך לכם כסף?</h2>
-            <p className="hero-subtitle" style={{ fontSize: '15px', color: 'var(--text-secondary)', marginTop: '8px', maxWidth: '600px', margin: '8px auto 0 auto' }}>
+        <section className="topics-section glass-card animate-fade-in">
+          <div className="section-header">
+            <span className="hero-tag">תחומי התוכן והעלונים</span>
+            <h2 className="section-title">מה תגלו בקהילה שיחסוך לכם כסף?</h2>
+            <p className="hero-subtitle topics-subtitle">
               סקירות מקיפות, כלים פרקטיים וגליונות מקצועיים המכסים את כל עולמות הפיננסים הצרכניים בגובה העיניים.
             </p>
           </div>
           
-          <div className="topics-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px' }}>
+          <div className="topics-grid">
             <div className="topic-card">
-              <div style={{ fontSize: '32px', marginBottom: '12px' }}>📊</div>
-              <h4 style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: '700', color: 'var(--text-primary)' }}>ידע כלכלי</h4>
+              <PieChart className="topic-icon" size={32} strokeWidth={1.5} />
+              <h4 className="topic-title">ידע כלכלי</h4>
             </div>
             
             <div className="topic-card">
-              <div style={{ fontSize: '32px', marginBottom: '12px' }}>🛒</div>
-              <h4 style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: '700', color: 'var(--text-primary)' }}>כלכלת משפחה</h4>
+              <ShoppingCart className="topic-icon" size={32} strokeWidth={1.5} />
+              <h4 className="topic-title">כלכלת משפחה</h4>
             </div>
 
             <div className="topic-card">
-              <div style={{ fontSize: '32px', marginBottom: '12px' }}>🏠</div>
-              <h4 style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: '700', color: 'var(--text-primary)' }}>תהליך המשכנתא</h4>
+              <Home className="topic-icon" size={32} strokeWidth={1.5} />
+              <h4 className="topic-title">תהליך המשכנתא</h4>
             </div>
 
             <div className="topic-card">
-              <div style={{ fontSize: '32px', marginBottom: '12px' }}>🏗️</div>
-              <h4 style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: '700', color: 'var(--text-primary)' }}>נדל”ן</h4>
+              <Building2 className="topic-icon" size={32} strokeWidth={1.5} />
+              <h4 className="topic-title">נדל”ן</h4>
             </div>
 
             <div className="topic-card">
-              <div style={{ fontSize: '32px', marginBottom: '12px' }}>📈</div>
-              <h4 style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: '700', color: 'var(--text-primary)' }}>השקעות</h4>
+              <TrendingUp className="topic-icon" size={32} strokeWidth={1.5} />
+              <h4 className="topic-title">השקעות</h4>
             </div>
 
             <div className="topic-card">
-              <div style={{ fontSize: '32px', marginBottom: '12px' }}>💼</div>
-              <h4 style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: '700', color: 'var(--text-primary)' }}>שוק ההון</h4>
+              <Briefcase className="topic-icon" size={32} strokeWidth={1.5} />
+              <h4 className="topic-title">שוק ההון</h4>
             </div>
 
             <div className="topic-card">
-              <div style={{ fontSize: '32px', marginBottom: '12px' }}>⚠️</div>
-              <h4 style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: '700', color: 'var(--text-primary)' }}>מניעת הונאות</h4>
+              <AlertTriangle className="topic-icon" size={32} strokeWidth={1.5} />
+              <h4 className="topic-title">מניעת הונאות</h4>
             </div>
 
             <div className="topic-card">
-              <div style={{ fontSize: '32px', marginBottom: '12px' }}>🌐</div>
-              <h4 style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: '700', color: 'var(--text-primary)' }}>מידע ברשת</h4>
+              <Globe className="topic-icon" size={32} strokeWidth={1.5} />
+              <h4 className="topic-title">מידע ברשת</h4>
             </div>
           </div>
         </section>
@@ -466,7 +475,7 @@ function App() {
                 ))
               ) : filteredFiles.length === 0 ? (
                 <div className="empty-view glass-card">
-                  <span className="empty-icon">🔍</span>
+                  <Globe className="empty-icon" size={48} />
                   <h3 className="empty-title">לא נמצאו קבצים</h3>
                   <p className="empty-desc">לא הצלחנו למצוא קבצים שתואמים את הגדרות החיפוש שלך או שאין קבצים בתיקייה זו.</p>
                 </div>
@@ -567,7 +576,7 @@ function App() {
         </section>
 
         {/* CTA Area */}
-        <section className="community-cta" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px', marginBottom: '60px' }}>
+        <section className="community-cta">
           <div className="cta-card glass-card animate-fade-in" style={{ animationDelay: '0.1s' }}>
             <div className="cta-icon-wrapper">
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -579,7 +588,7 @@ function App() {
               <p className="cta-description">
                 רוצים לקרוא את כל הטיפים, המדריכים והעדכונים הכלכליים שלנו בזמן אמת? הצטרפו לערוץ הראשי בצ'אט.
               </p>
-              <a href="https://mesudarim.chatfree.app/" target="_blank" rel="noopener noreferrer" className="btn-accent" style={{ textDecoration: 'none', alignSelf: 'flex-start', marginTop: 'auto' }}>
+              <a href="https://mesudarim.chatfree.app/" target="_blank" rel="noopener noreferrer" className="btn-accent">
                 <span>כניסה לערוץ בצ'אט</span>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <line x1="22" y1="2" x2="11" y2="13"></line>
@@ -601,7 +610,7 @@ function App() {
               <p className="cta-description">
                 רוצים להצטרף לקבוצות דיון וטיפים קטנות וממוקדות בצ'אט הפתוחות לחלוטין גם למנויי נטפרי? שלחו בקשת הצטרפות אישית.
               </p>
-              <a href="mailto:nisanetzioni@gmail.com?subject=בקשת הצטרפות לקבוצת הטיפים בצ'אט (מנויי נטפרי)" className="btn-primary" style={{ textDecoration: 'none', alignSelf: 'flex-start', marginTop: 'auto' }}>
+              <a href="mailto:nisanetzioni@gmail.com?subject=בקשת הצטרפות לקבוצת הטיפים בצ'אט (מנויי נטפרי)" className="btn-primary">
                 <span>שליחת מייל להצטרפות</span>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
@@ -623,11 +632,11 @@ function App() {
               <p className="cta-description">
                 האזינו לטיפים במערכת הטלפונית 1700-111-212 (רישום לצינתוק בשלוחה 4) או הצטרפו במייל לקבלת העלונים השבועיים של הקהילה.
               </p>
-              <div style={{ display: 'flex', gap: '8px', marginTop: 'auto' }}>
-                <a href="mailto:05202020a@gmail.com?subject=בקשת הצטרפות לרשימת התפוצה של טיפים לכלכלה נכונה" className="btn-accent" style={{ textDecoration: 'none', padding: '8px 14px', borderRadius: '8px', fontSize: '13px' }}>
+              <div className="cta-buttons-row">
+                <a href="mailto:05202020a@gmail.com?subject=בקשת הצטרפות לרשימת התפוצה של טיפים לכלכלה נכונה" className="btn-accent">
                   <span>הצטרפו במייל</span>
                 </a>
-                <a href="tel:1700111212" className="btn-primary" style={{ textDecoration: 'none', padding: '8px 14px', borderRadius: '8px', fontSize: '13px' }}>
+                <a href="tel:1700111212" className="btn-primary">
                   <span>חיוג למערכת</span>
                 </a>
               </div>
