@@ -1,5 +1,10 @@
 [
   {
+    "id": "1gECXQCA5OfRZEXB_oi52lkAk-liq9C31",
+    "name": "סרטונים",
+    "files": []
+  },
+  {
     "id": "10Uy9vemeeQENI0wKjj-ocqCDkOaIMR-c",
     "name": "מדריכים",
     "files": [
@@ -152,6 +157,19 @@
     "id": "10_M3GDu0yFb2iMPJ3LWhNW4doPyU1TZL",
     "name": "חוברות ",
     "files": [
+      {
+        "id": "1VB18cEaVgUHJoMNA-xFqoAl_8TGwi8zF",
+        "name": "טיפים לכלכלה נכונה חוברת מספר 55",
+        "mimeType": "application/pdf",
+        "webViewLink": "https://drive.google.com/file/d/1VB18cEaVgUHJoMNA-xFqoAl_8TGwi8zF/view?usp=drivesdk",
+        "webContentLink": "https://drive.google.com/uc?export=download&id=1VB18cEaVgUHJoMNA-xFqoAl_8TGwi8zF",
+        "thumbnailLink": "https://drive.google.com/thumbnail?id=1VB18cEaVgUHJoMNA-xFqoAl_8TGwi8zF&sz=w600",
+        "modifiedTime": "2026-06-03T21:53:27.000Z",
+        "size": "660398",
+        "description": "קובץ מקצועי מתוך קהילת טיפים לכלכלה נכונה.",
+        "author": "מערכת כלכלה נכונה",
+        "localUrl": "documents/1VB18cEaVgUHJoMNA-xFqoAl_8TGwi8zF.pdf"
+      },
       {
         "id": "11b7Y3tdMh0TAt1ZqD2bi29rvqWL-tLCx",
         "name": "טיפים לכלכלה נכונה חוברת מספר 54",
