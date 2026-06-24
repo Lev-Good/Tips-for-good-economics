@@ -130,12 +130,44 @@ function App() {
       setLoading(true);
       try {
         const fetchedData = await fetchAllData();
-        setCategories(fetchedData);
-        if (fetchedData && fetchedData.length > 0) {
-          setActiveCategory(fetchedData[0]);
+        
+        // Load videos from videos.json
+        let videoData = [];
+        try {
+          const baseUrl = import.meta.env.BASE_URL || '/';
+          const res = await fetch(baseUrl + 'videos.json');
+          if (res.ok) {
+            videoData = await res.json();
+            console.log(`Loaded ${videoData.length} videos!`);
+          }
+        } catch (vErr) {
+          console.log('No videos.json found yet:', vErr.message);
+        }
+
+        let finalCategories = [...fetchedData];
+        if (videoData.length > 0) {
+          finalCategories.push({
+            id: 'cat-videos',
+            name: 'סרטוני הקהילה 🎥',
+            files: videoData.map(v => ({
+              id: v.id,
+              name: v.title,
+              author: 'קהילת מסודרים',
+              modifiedTime: v.published,
+              size: 0,
+              type: 'video', // Custom type to render YouTube embed
+              thumbnailLink: v.thumbnail || `https://img.youtube.com/vi/${v.id}/hqdefault.jpg`,
+              description: 'סרטון מתוך ערוץ היוטיוב הרשמי של קבוצת מסודרים.'
+            }))
+          });
+        }
+
+        setCategories(finalCategories);
+        if (finalCategories.length > 0) {
+          setActiveCategory(finalCategories[0]);
           
           // Check if it's using the fallback mock data
-          const isMockData = fetchedData[0]?.id?.startsWith('cat-');
+          const isMockData = finalCategories[0]?.id?.startsWith('cat-');
           if (isMockData) {
             setShowHelpAlert(true);
           } else {
@@ -406,7 +438,20 @@ function App() {
 
                 {/* Embedded Viewer Content Container */}
                 <div className="viewer-body-container">
-                  {isMockFile ? (
+                  {selectedFile.type === 'video' ? (
+                    /* YouTube Embed Player */
+                    <div className="iframe-scroll-wrapper" style={{ background: '#000' }}>
+                      <iframe 
+                        src={`https://www.youtube.com/embed/${selectedFile.id}?autoplay=1&rel=0`} 
+                        width="100%" 
+                        height="100%" 
+                        style={{ border: 'none', display: 'block' }}
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                        title={selectedFile.name}
+                      />
+                    </div>
+                  ) : isMockFile ? (
                     /* Beautiful interactive OCR mock reader for local demonstration */
                     <div className="mock-reader-layout">
                       {/* Articles Sidebar */}
