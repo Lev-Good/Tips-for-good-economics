@@ -26,21 +26,8 @@ function httpGet(url) {
 
 async function main() {
   try {
-    console.log('Fetching YouTube channel page to find channel ID...');
-    const html = await httpGet(CHANNEL_URL);
-    
-    // Regex to match channel ID
-    const channelIdMatch = html.match(/"channelId":"(UC[^"]+)"/) || 
-                           html.match(/itemprop="channelId" content="(UC[^"]+)"/) || 
-                           html.match(/yt:channelId" content="(UC[^"]+)"/) ||
-                           html.match(/href="https:\/\/www\.youtube\.com\/channel\/(UC[^"]+)"/);
-                           
-    if (!channelIdMatch) {
-      throw new Error('Could not find Channel ID in YouTube channel HTML.');
-    }
-    
-    const channelId = channelIdMatch[1];
-    console.log(`Found Channel ID: ${channelId}`);
+    const channelId = 'UCJtZRmaAfaCn759sYxLq4Yw';
+    console.log(`Using Channel ID: ${channelId}`);
     
     console.log('Fetching channel RSS feed...');
     const feedUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`;
