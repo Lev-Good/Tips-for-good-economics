@@ -12,9 +12,9 @@
   --accent-hover: #f59e0b;
   --accent-rgb: 251, 191, 36;
   
-  /* פונטים - שילוב Bayon הייחודי לכותרות הענקיות */
-  --font-heading: 'Bayon', 'Rubik', 'Heebo', system-ui, sans-serif;
-  --font-body: 'Heebo', 'Rubik', system-ui, sans-serif;
+  /* פונטים - גופן רוביק קריא, נקי ומודרני */
+  --font-heading: 'Rubik', 'Heebo', system-ui, sans-serif;
+  --font-body: 'Rubik', 'Heebo', system-ui, sans-serif;
   
   /* עיצוב כללי - מצב בהיר בסגנון דף הנחיתה */
   --bg-gradient: linear-gradient(135deg, #eefdf7 0%, #ffffff 50%, #e6f9f0 100%);

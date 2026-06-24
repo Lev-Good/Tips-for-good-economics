@@ -5,7 +5,8 @@ import {
   Eye, BellOff, ShoppingBag, PieChart, 
   ShoppingCart, Home, Building2, TrendingUp, 
   Briefcase, AlertTriangle, Globe,
-  Search, ChevronLeft, Download, Maximize2, Minimize2
+  Search, ChevronLeft, Download, Maximize2, Minimize2,
+  Play, Video, Book, FileText
 } from 'lucide-react';
 import { 
   fetchAllData, 
@@ -105,12 +106,14 @@ function App() {
   const [activeMockArticleIndex, setActiveMockArticleIndex] = useState(0);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [readerFontSize, setReaderFontSize] = useState(16);
+  const [isPlayingVideo, setIsPlayingVideo] = useState(false);
 
   const handleSelectFile = (file) => {
     setSelectedFile(file);
     setActiveMockArticleIndex(0);
-    setIsSidebarCollapsed(true); // Auto collapse sidebar for focused reading
+    setIsSidebarCollapsed(file.type === 'video' ? true : false); // Keep sidebar open for booklets/guides
     setReaderFontSize(16); // Reset font size
+    setIsPlayingVideo(false); // Reset play state
   };
 
   const handleBackToHome = () => {
@@ -130,7 +133,23 @@ function App() {
       setLoading(true);
       try {
         const fetchedData = await fetchAllData();
-        
+        let finalCategories = fetchedData
+          .map(cat => ({
+            ...cat,
+            name: cat.name.trim(),
+            files: cat.files.map(file => {
+              let cleanedName = file.name;
+              if (cleanedName.startsWith('טיפים לכלכלה נכונה חוברת מספר')) {
+                cleanedName = cleanedName.replace('טיפים לכלכלה נכונה חוברת מספר', 'חוברת מספר');
+              }
+              return {
+                ...file,
+                name: cleanedName
+              };
+            })
+          }))
+          .filter(cat => cat.name !== 'סרטונים');
+
         // Load videos from videos.json
         let videoData = [];
         try {
@@ -144,11 +163,10 @@ function App() {
           console.log('No videos.json found yet:', vErr.message);
         }
 
-        let finalCategories = [...fetchedData];
         if (videoData.length > 0) {
           finalCategories.push({
             id: 'cat-videos',
-            name: 'סרטוני הקהילה 🎥',
+            name: 'סרטונים',
             files: videoData.map(v => ({
               id: v.id,
               name: v.title,
@@ -164,10 +182,12 @@ function App() {
 
         setCategories(finalCategories);
         if (finalCategories.length > 0) {
-          setActiveCategory(finalCategories[0]);
+          // Default to "מדריכים" if found
+          const defaultCat = finalCategories.find(c => c.name === 'מדריכים') || finalCategories[0];
+          setActiveCategory(defaultCat);
           
           // Check if it's using the fallback mock data
-          const isMockData = finalCategories[0]?.id?.startsWith('cat-');
+          const isMockData = defaultCat?.id?.startsWith('cat-');
           if (isMockData) {
             setShowHelpAlert(true);
           } else {
@@ -385,7 +405,9 @@ function App() {
                     >
                       <div className="file-item-info">
                         <span className="file-item-name">{file.name}</span>
-                        <span className="file-item-author">מאת: {file.author}</span>
+                        {file.author && file.author !== 'מערכת כלכלה נכונה' && (
+                          <span className="file-item-author">מאת: {file.author}</span>
+                        )}
                       </div>
                       <ChevronLeft size={16} className="file-item-arrow" />
                     </button>
@@ -405,11 +427,19 @@ function App() {
                     <span className="viewer-category-badge">{activeCategory?.name}</span>
                     <h2 className="viewer-title">{selectedFile.name}</h2>
                     <div className="viewer-meta">
-                      <span className="viewer-author">מאת: {selectedFile.author}</span>
-                      <span className="viewer-divider">•</span>
+                      {selectedFile.author && selectedFile.author !== 'מערכת כלכלה נכונה' && (
+                        <>
+                          <span className="viewer-author">מאת: {selectedFile.author}</span>
+                          <span className="viewer-divider">•</span>
+                        </>
+                      )}
                       <span className="viewer-date">{new Date(selectedFile.modifiedTime).toLocaleDateString('he-IL')}</span>
-                      <span className="viewer-divider">•</span>
-                      <span className="viewer-size">{formatBytes(selectedFile.size)}</span>
+                      {selectedFile.size > 0 && (
+                        <>
+                          <span className="viewer-divider">•</span>
+                          <span className="viewer-size">{formatBytes(selectedFile.size)}</span>
+                        </>
+                      )}
                     </div>
                   </div>
                   
@@ -439,17 +469,33 @@ function App() {
                 {/* Embedded Viewer Content Container */}
                 <div className="viewer-body-container">
                   {selectedFile.type === 'video' ? (
-                    /* YouTube Embed Player */
-                    <div className="iframe-scroll-wrapper" style={{ background: '#000' }}>
-                      <iframe 
-                        src={`https://www.youtube.com/embed/${selectedFile.id}?autoplay=1&rel=0`} 
-                        width="100%" 
-                        height="100%" 
-                        style={{ border: 'none', display: 'block' }}
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                        title={selectedFile.name}
-                      />
+                    /* YouTube Embed Player with Preview Cover */
+                    <div className="iframe-scroll-wrapper" style={{ background: '#000', position: 'relative' }}>
+                      {isPlayingVideo ? (
+                        <iframe 
+                          src={`https://www.youtube.com/embed/${selectedFile.id}?autoplay=1&rel=0`} 
+                          width="100%" 
+                          height="100%" 
+                          style={{ border: 'none', display: 'block' }}
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowFullScreen
+                          title={selectedFile.name}
+                        />
+                      ) : (
+                        <div className="video-player-preview" onClick={() => setIsPlayingVideo(true)}>
+                          <img 
+                            src={selectedFile.thumbnailLink} 
+                            alt={selectedFile.name} 
+                            className="player-preview-thumbnail"
+                          />
+                          <div className="video-player-preview-overlay">
+                            <div className="video-player-play-btn">
+                              <Play size={40} fill="currentColor" />
+                            </div>
+                            <span className="video-player-play-text">לחץ לניגון הסרטון</span>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   ) : isMockFile ? (
                     /* Beautiful interactive OCR mock reader for local demonstration */
@@ -530,6 +576,44 @@ function App() {
               /* Welcome Mode: Interactive Dashboard & Advanced Full-Text Search */
               <div className="library-welcome-dashboard animate-fade-in">
                 
+                {/* Large Category Navigation Buttons */}
+                <div className="category-nav-cards">
+                  {categories.map(cat => {
+                    let icon = <BookOpen size={28} />;
+                    let subtitle = "מדריכי עומק וכלים פיננסיים";
+                    
+                    if (cat.name === 'חוברות') {
+                      icon = <FileText size={28} />;
+                      subtitle = "עלונים שבועיים וגליונות טיפים";
+                    } else if (cat.name === 'סרטונים') {
+                      icon = <Video size={28} />;
+                      subtitle = "שיעורים וסרטוני הקהילה";
+                    }
+                    
+                    const isActive = activeCategory?.id === cat.id;
+                    
+                    return (
+                      <button 
+                        key={cat.id}
+                        className={`category-nav-card glass-card ${isActive ? 'active' : ''}`}
+                        onClick={() => {
+                          setActiveCategory(cat);
+                          setNameSearchQuery(''); // Reset name filter on category switch
+                        }}
+                      >
+                        <div className="category-card-icon-wrapper">
+                          {icon}
+                        </div>
+                        <div className="category-card-content">
+                          <h4 className="category-card-title">{cat.name}</h4>
+                          <span className="category-card-subtitle">{subtitle}</span>
+                          <span className="category-card-count">{cat.files ? cat.files.length : 0} פריטים</span>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+
                 {/* Separate search input for searching inside all files */}
                 <div className="fulltext-search-container glass-card">
                   <div className="fulltext-search-header-info">
@@ -592,8 +676,70 @@ function App() {
                   )}
                 </div>
 
+                {/* Grid of All Available Handbooks in Category (as elegant list cards) */}
+                <div className="dashboard-guides-section">
+                  <h3 className="guides-section-title">
+                    {activeCategory?.name === 'סרטונים' ? 'סרטוני הדרכה ושיעורים' : `כל המדריכים והחוברות בקטגוריה: ${activeCategory?.name}`}
+                  </h3>
+                  <div className={activeCategory?.name === 'סרטונים' ? 'dashboard-videos-grid' : 'dashboard-guides-grid'}>
+                    {filteredFilesByName.length === 0 ? (
+                      <div className="empty-view glass-card" style={{ gridColumn: '1 / -1', padding: '40px' }}>
+                        <Globe className="empty-icon" size={40} />
+                        <h3 className="empty-title">לא נמצאו קבצים מתאימים</h3>
+                      </div>
+                    ) : (
+                      filteredFilesByName.map(file => {
+                        const isVideo = file.type === 'video';
+                        
+                        if (isVideo) {
+                          return (
+                            <div key={file.id} className="dashboard-video-card glass-card" onClick={() => handleSelectFile(file)}>
+                              <div className="video-card-thumbnail-wrapper">
+                                <img src={file.thumbnailLink} alt={file.name} className="video-card-thumbnail" />
+                                <div className="video-card-play-overlay">
+                                  <div className="play-button-circle">
+                                    <Play size={20} fill="currentColor" />
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="video-card-body">
+                                <h4 className="video-card-title">{file.name}</h4>
+                                <div className="video-card-footer">
+                                  <span className="video-card-date">
+                                    {new Date(file.modifiedTime).toLocaleDateString('he-IL')}
+                                  </span>
+                                  <span className="video-card-action">צפייה בסרטון ←</span>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        }
+                        
+                        const isDefaultAuthor = !file.author || file.author === 'מערכת כלכלה נכונה';
+                        const isDefaultDesc = !file.description || file.description === 'קובץ מקצועי מתוך קהילת טיפים לכלכלה נכונה.';
+                        
+                        return (
+                          <div key={file.id} className="dashboard-guide-card glass-card" onClick={() => handleSelectFile(file)}>
+                            <div className="guide-card-icon">
+                              {activeCategory?.name === 'חוברות' ? <FileText size={24} /> : <BookOpen size={24} />}
+                            </div>
+                            <div className="guide-card-body">
+                              <h4 className="guide-card-title">{file.name}</h4>
+                              {!isDefaultDesc && <p className="guide-card-desc">{file.description}</p>}
+                              <div className="guide-card-footer">
+                                {!isDefaultAuthor && <span className="guide-card-author">מאת: {file.author}</span>}
+                                <span className="guide-card-action">קרא כעת ←</span>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })
+                    )}
+                  </div>
+                </div>
+
                 {/* Dashboard Stats */}
-                <div className="dashboard-stats-grid">
+                <div className="dashboard-stats-grid" style={{ marginTop: '40px' }}>
                   <div className="dashboard-stat-card glass-card">
                     <Users size={28} className="dashboard-stat-icon" />
                     <div>
@@ -617,41 +763,12 @@ function App() {
                   </div>
                 </div>
 
-                {/* Grid of All Available Handbooks in Category (as elegant list cards) */}
-                <div className="dashboard-guides-section">
-                  <h3 className="guides-section-title">כל המדריכים בקטגוריה: {activeCategory?.name}</h3>
-                  <div className="dashboard-guides-grid">
-                    {filteredFilesByName.length === 0 ? (
-                      <div className="empty-view glass-card" style={{ gridColumn: '1 / -1', padding: '40px' }}>
-                        <Globe className="empty-icon" size={40} />
-                        <h3 className="empty-title">לא נמצאו מדריכים בקטגוריה זו</h3>
-                      </div>
-                    ) : (
-                      filteredFilesByName.map(file => (
-                        <div key={file.id} className="dashboard-guide-card glass-card" onClick={() => handleSelectFile(file)}>
-                          <div className="guide-card-icon">
-                            <BookOpen size={24} />
-                          </div>
-                          <div className="guide-card-body">
-                            <h4 className="guide-card-title">{file.name}</h4>
-                            <p className="guide-card-desc">{file.description}</p>
-                            <div className="guide-card-footer">
-                              <span className="guide-card-author">מאת: {file.author}</span>
-                              <span className="guide-card-action">קרא כעת ←</span>
-                            </div>
-                          </div>
-                        </div>
-                      ))
-                    )}
-                  </div>
-                </div>
-
                 {/* Community marketing info */}
-                <div className="dashboard-welcome-info glass-card">
+                <div className="dashboard-welcome-info glass-card" style={{ marginTop: '30px' }}>
                   <h3>ברוכים הבאים לקהילת "טיפים לכלכלה נכונה"</h3>
                   <p>
                     הפלטפורמה המקצועית והמובילה במגזר החרדי לחסכון, השקעות והתנהלות פיננסית נבונה. 
-                    בחר מדריך מסרגל הניווט הימני כדי להתחיל לקרוא אותו ישירות בתוך הדפדפן, או השתמש בתיבת החיפוש החכם כדי לאתר מידע ספציפי בתוך תוכן העלונים.
+                    בחר מדריך מסרגל הניווט הימני או לחץ על לשוניות הניווט למעלה כדי להתחיל לקרוא אותו ישירות בתוך הדפדפן, או השתמש בתיבת החיפוש החכם כדי לאתר מידע ספציפי בתוך תוכן העלונים.
                   </p>
                 </div>
 
