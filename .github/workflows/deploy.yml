@@ -42,7 +42,7 @@ jobs:
         run: node scripts/sync_drive.cjs
 
       - name: Run YouTube Video Sync
-        run: node scripts/sync-youtube.js
+        run: node scripts/sync-youtube.cjs
 
       - name: Commit and Push Synchronized Files
         run: |
