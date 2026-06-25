@@ -94,31 +94,31 @@ function App() {
   // App States (Entire tree is loaded in categories)
   const [categories, setCategories] = useState([]);
   const [activeCategory, setActiveCategory] = useState(null);
+  const [activeTab, setActiveTab] = useState('מדריכים');
   const [nameSearchQuery, setNameSearchQuery] = useState('');
   const [contentSearchQuery, setContentSearchQuery] = useState('');
   
   // Loading & UI States
   const [loading, setLoading] = useState(false);
   const [showHelpAlert, setShowHelpAlert] = useState(false);
+  const [isSmartSearchOpen, setIsSmartSearchOpen] = useState(false);
+  const [isChatDrawerOpen, setIsChatDrawerOpen] = useState(false);
   
-  // Selected File for In-App Viewer
+  // Selected File for Overlay Modal
   const [selectedFile, setSelectedFile] = useState(null);
   const [activeMockArticleIndex, setActiveMockArticleIndex] = useState(0);
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [readerFontSize, setReaderFontSize] = useState(16);
   const [isPlayingVideo, setIsPlayingVideo] = useState(false);
 
   const handleSelectFile = (file) => {
     setSelectedFile(file);
     setActiveMockArticleIndex(0);
-    setIsSidebarCollapsed(file.type === 'video' ? true : false); // Keep sidebar open for booklets/guides
     setReaderFontSize(16); // Reset font size
     setIsPlayingVideo(false); // Reset play state
   };
 
-  const handleBackToHome = () => {
+  const handleCloseModal = () => {
     setSelectedFile(null);
-    setIsSidebarCollapsed(false); // Restore sidebar
   };
 
   // Apply Theme
@@ -185,6 +185,7 @@ function App() {
           // Default to "מדריכים" if found
           const defaultCat = finalCategories.find(c => c.name === 'מדריכים') || finalCategories[0];
           setActiveCategory(defaultCat);
+          setActiveTab(defaultCat.name);
           
           // Check if it's using the fallback mock data
           const isMockData = defaultCat?.id?.startsWith('cat-');
@@ -211,15 +212,13 @@ function App() {
   // Get all files from active category
   const activeFiles = activeCategory ? activeCategory.files : [];
 
-  // Filter files in sidebar based on name search query
+  // Filter files in explorer based on name search query (strict name search)
   const filteredFilesByName = React.useMemo(() => {
     const query = nameSearchQuery.trim().toLowerCase();
     const files = activeCategory ? activeCategory.files : [];
     if (!query) return files;
     return files.filter(file => 
-      file.name.toLowerCase().includes(query) ||
-      (file.author && file.author.toLowerCase().includes(query)) ||
-      (file.description && file.description.toLowerCase().includes(query))
+      file.name.toLowerCase().includes(query)
     );
   }, [nameSearchQuery, activeCategory]);
 
@@ -297,6 +296,11 @@ function App() {
           </div>
           
           <div className="header-actions">
+            <button className="btn-secondary chat-drawer-toggle" onClick={() => setIsChatDrawerOpen(true)} style={{ display: 'flex', alignItems: 'center', gap: '8px' }} title="עדכוני הקהילה בצ'אט">
+              <MessageCircle size={16} />
+              <span>עדכוני הקהילה בצ'אט</span>
+            </button>
+            
             <button className="theme-toggle" onClick={toggleTheme} title="שינוי מצב עיצוב">
               {theme === 'light' ? (
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -342,426 +346,187 @@ function App() {
           </p>
         </section>
 
-        {/* Integrated Library Layout */}
-        <section className={`library-layout ${isSidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
-          
-          {/* Right Sidebar: Books, categories, and name filter */}
-          <aside className="library-sidebar glass-card">
-            <div className="sidebar-header">
-              <h3 className="sidebar-heading">ניווט וחיפוש מדריכים</h3>
-              
-              {/* Category dropdown select */}
-              <div className="category-select-wrapper">
-                <label className="sidebar-label">סינון לפי נושא:</label>
-                <select 
-                  className="category-dropdown-select" 
-                  value={activeCategory?.id || ''} 
-                  onChange={(e) => {
-                    const cat = categories.find(c => c.id === e.target.value);
-                    if (cat) setActiveCategory(cat);
-                  }}
-                >
-                  {categories.map(cat => (
-                    <option key={cat.id} value={cat.id}>
-                      {cat.name} ({cat.files ? cat.files.length : 0})
-                    </option>
-                  ))}
-                </select>
-              </div>
+        {/* Tab Navigation */}
+        <div className="category-nav-cards">
+          {['מדריכים', 'חוברות', 'סרטונים', 'אודות'].map(tabName => {
+            let icon = <BookOpen size={28} />;
+            let subtitle = "מדריכי עומק וכלים פיננסיים";
+            let countText = "";
 
-              {/* Search book names */}
-              <div className="sidebar-search-box">
-                <label className="sidebar-label">חיפוש לפי שם:</label>
-                <div className="sidebar-search-input-wrapper">
-                  <input 
-                    type="text" 
-                    className="library-search-input" 
-                    placeholder="חפש בשם המדריך..." 
-                    value={nameSearchQuery}
-                    onChange={(e) => setNameSearchQuery(e.target.value)}
-                  />
-                  <Search size={16} className="search-icon-small" />
+            if (tabName === 'חוברות') {
+              icon = <FileText size={28} />;
+              subtitle = "עלונים שבועיים וגליונות טיפים";
+              const cat = categories.find(c => c.name === 'חוברות');
+              if (cat) countText = `${cat.files ? cat.files.length : 0} פריטים`;
+            } else if (tabName === 'סרטונים') {
+              icon = <Video size={28} />;
+              subtitle = "שיעורים וסרטוני הקהילה";
+              const cat = categories.find(c => c.name === 'סרטונים');
+              if (cat) countText = `${cat.files ? cat.files.length : 0} פריטים`;
+            } else if (tabName === 'מדריכים') {
+              const cat = categories.find(c => c.name === 'מדריכים');
+              if (cat) countText = `${cat.files ? cat.files.length : 0} פריטים`;
+            } else if (tabName === 'אודות') {
+              icon = <Users size={28} />;
+              subtitle = "מידע על הקהילה והחברים";
+              countText = "פרטי הקהילה";
+            }
+
+            const isActive = activeTab === tabName;
+
+            return (
+              <button 
+                key={tabName}
+                className={`category-nav-card glass-card ${isActive ? 'active' : ''}`}
+                onClick={() => {
+                  setActiveTab(tabName);
+                  setNameSearchQuery(''); // Clear search on tab switch
+                  if (tabName !== 'אודות') {
+                    const cat = categories.find(c => c.name === tabName);
+                    if (cat) setActiveCategory(cat);
+                  } else {
+                    setActiveCategory(null);
+                  }
+                }}
+              >
+                <div className="category-card-icon-wrapper">
+                  {icon}
+                </div>
+                <div className="category-card-content">
+                  <h4 className="category-card-title">{tabName}</h4>
+                  <span className="category-card-subtitle">{subtitle}</span>
+                  <span className="category-card-count">{countText}</span>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Tab Content Area */}
+        {activeTab !== 'אודות' ? (
+          /* Files Explorer View */
+          <div className="library-welcome-dashboard animate-fade-in" style={{ width: '100%' }}>
+            
+            {/* Control Bar: Simple Search + Smart Content Search Button */}
+            <div className="explorer-control-bar glass-card">
+              <div className="search-input-wrapper">
+                <input 
+                  type="text" 
+                  className="search-input"
+                  placeholder={`חפש בשם ה${activeTab === 'סרטונים' ? 'סרטון' : 'קובץ'}...`}
+                  value={nameSearchQuery}
+                  onChange={(e) => setNameSearchQuery(e.target.value)}
+                />
+                <Search className="search-icon" size={18} />
+              </div>
+              
+              <button className="btn-smart-search" onClick={() => setIsSmartSearchOpen(true)}>
+                <Search size={16} className="smart-search-icon-btn" />
+                <span>חיפוש חכם בתוכן המאמרים והמדריכים</span>
+              </button>
+            </div>
+
+            {/* Grid of files/videos in active category */}
+            <div className="dashboard-guides-section">
+              <h3 className="guides-section-title">
+                {activeTab === 'סרטונים' ? 'סרטוני הדרכה ושיעורים' : `כל המדריכים והחוברות בקטגוריה: ${activeTab}`}
+              </h3>
+              <div className={activeTab === 'סרטונים' ? 'dashboard-videos-grid' : 'dashboard-guides-grid'}>
+                {loading ? (
+                  Array(6).fill(0).map((_, i) => (
+                    <div key={i} className="skeleton guide-card-skeleton glass-card" style={{ height: '180px', borderRadius: '16px' }} />
+                  ))
+                ) : filteredFilesByName.length === 0 ? (
+                  <div className="empty-view glass-card" style={{ gridColumn: '1 / -1', padding: '40px' }}>
+                    <Globe className="empty-icon" size={40} />
+                    <h3 className="empty-title">לא נמצאו קבצים מתאימים</h3>
+                  </div>
+                ) : (
+                  filteredFilesByName.map(file => {
+                    const isVideo = file.type === 'video';
+                    
+                    if (isVideo) {
+                      return (
+                        <div key={file.id} className="dashboard-video-card glass-card" onClick={() => handleSelectFile(file)}>
+                          <div className="video-card-thumbnail-wrapper">
+                            <img src={file.thumbnailLink} alt={file.name} className="video-card-thumbnail" />
+                            <div className="video-card-play-overlay">
+                              <div className="play-button-circle">
+                                <Play size={20} fill="currentColor" />
+                              </div>
+                            </div>
+                          </div>
+                          <div className="video-card-body">
+                            <h4 className="video-card-title">{file.name}</h4>
+                            <div className="video-card-footer">
+                              <span className="video-card-date">
+                                {new Date(file.modifiedTime).toLocaleDateString('he-IL')}
+                              </span>
+                              <span className="video-card-action">צפייה בסרטון ←</span>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    }
+                    
+                    const isDefaultAuthor = !file.author || file.author === 'מערכת כלכלה נכונה';
+                    const isDefaultDesc = !file.description || file.description === 'קובץ מקצועי מתוך קהילת טיפים לכלכלה נכונה.';
+                    
+                    return (
+                      <div key={file.id} className="dashboard-guide-card glass-card" onClick={() => handleSelectFile(file)}>
+                        <div className="guide-card-icon">
+                          {activeTab === 'חוברות' ? <FileText size={24} /> : <BookOpen size={24} />}
+                        </div>
+                        <div className="guide-card-body">
+                          <h4 className="guide-card-title">{file.name}</h4>
+                          {!isDefaultDesc && <p className="guide-card-desc">{file.description}</p>}
+                          <div className="guide-card-footer">
+                            {!isDefaultAuthor && <span className="guide-card-author">מאת: {file.author}</span>}
+                            <span className="guide-card-action">קרא כעת ←</span>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+            </div>
+          </div>
+        ) : (
+          /* About the Community View ("אודות") */
+          <div className="library-welcome-dashboard animate-fade-in" style={{ width: '100%' }}>
+            
+            {/* Dashboard Stats */}
+            <div className="dashboard-stats-grid" style={{ marginTop: '40px' }}>
+              <div className="dashboard-stat-card glass-card">
+                <Users size={28} className="dashboard-stat-icon" />
+                <div>
+                  <span className="dashboard-stat-num">15,000+</span>
+                  <span className="dashboard-stat-text">חברי קבוצה</span>
+                </div>
+              </div>
+              <div className="dashboard-stat-card glass-card">
+                <BookOpen size={28} className="dashboard-stat-icon" />
+                <div>
+                  <span className="dashboard-stat-num">70+</span>
+                  <span className="dashboard-stat-text">מדריכים וחוברות</span>
+                </div>
+              </div>
+              <div className="dashboard-stat-card glass-card">
+                <MessageCircle size={28} className="dashboard-stat-icon" />
+                <div>
+                  <span className="dashboard-stat-num">3,500+</span>
+                  <span className="dashboard-stat-text">פניות שנענו</span>
+                </div>
+              </div>
+              <div className="dashboard-stat-card glass-card">
+                <Briefcase size={28} className="dashboard-stat-icon" />
+                <div>
+                  <span className="dashboard-stat-num">20+</span>
+                  <span className="dashboard-stat-text">אנשי מקצוע</span>
                 </div>
               </div>
             </div>
-
-                {/* List of files in active category, filtered by name search */}
-            <ul className="library-file-list">
-              {loading ? (
-                Array(5).fill(0).map((_, i) => (
-                  <li key={i} className="skeleton file-item-skeleton" style={{ height: '56px', marginBottom: '8px', borderRadius: '10px' }} />
-                ))
-              ) : filteredFilesByName.length === 0 ? (
-                <div className="sidebar-empty">
-                  <Globe size={24} style={{ opacity: 0.5, marginBottom: '8px' }} />
-                  <span>לא נמצאו קבצים מתאימים</span>
-                </div>
-              ) : (
-                filteredFilesByName.map(file => (
-                  <li key={file.id}>
-                    <button 
-                      className={`file-list-item ${selectedFile?.id === file.id ? 'active' : ''}`}
-                      onClick={() => handleSelectFile(file)}
-                    >
-                      <div className="file-item-info">
-                        <span className="file-item-name">{file.name}</span>
-                        {file.author && file.author !== 'מערכת כלכלה נכונה' && (
-                          <span className="file-item-author">מאת: {file.author}</span>
-                        )}
-                      </div>
-                      <ChevronLeft size={16} className="file-item-arrow" />
-                    </button>
-                  </li>
-                ))
-              )}
-            </ul>
-          </aside>
-
-          {/* Left Area: Main Workspace (Viewer or Welcome Dashboard) */}
-          <div className="library-main-view">
-            {selectedFile ? (
-              /* Reading Mode: In-App Document Viewer */
-              <div className="library-viewer-panel glass-card animate-fade-in">
-                <div className="viewer-header">
-                  <div className="viewer-title-section">
-                    <span className="viewer-category-badge">{activeCategory?.name}</span>
-                    <h2 className="viewer-title">{selectedFile.name}</h2>
-                    <div className="viewer-meta">
-                      {selectedFile.author && selectedFile.author !== 'מערכת כלכלה נכונה' && (
-                        <>
-                          <span className="viewer-author">מאת: {selectedFile.author}</span>
-                          <span className="viewer-divider">•</span>
-                        </>
-                      )}
-                      <span className="viewer-date">{new Date(selectedFile.modifiedTime).toLocaleDateString('he-IL')}</span>
-                      {selectedFile.size > 0 && (
-                        <>
-                          <span className="viewer-divider">•</span>
-                          <span className="viewer-size">{formatBytes(selectedFile.size)}</span>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                  
-                  <div className="viewer-actions">
-                    <button className="btn-secondary toggle-sidebar-btn" onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)} title={isSidebarCollapsed ? "הצג סרגל צד" : "תצוגה מלאה"}>
-                      {isSidebarCollapsed ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
-                      <span>{isSidebarCollapsed ? "הצג סרגל צד" : "תצוגה מלאה"}</span>
-                    </button>
-                    <button className="btn-secondary" onClick={handleBackToHome}>
-                      <Home size={16} />
-                      <span>חזרה למסך הבית</span>
-                    </button>
-                    {selectedFile.webContentLink && selectedFile.webContentLink !== '#' ? (
-                      <a href={selectedFile.webContentLink} className="btn-primary">
-                        <Download size={16} />
-                        <span>הורדה</span>
-                      </a>
-                    ) : (
-                      <button className="btn-primary" onClick={() => alert('קבצי דמה אינם ניתנים להורדה אמיתית. בעת העלאת קבצים אמיתיים לדרייב, כפתור זה יוריד אותם מיידית!')}>
-                        <Download size={16} />
-                        <span>הורדה</span>
-                      </button>
-                    )}
-                  </div>
-                </div>
-
-                {/* Embedded Viewer Content Container */}
-                <div className="viewer-body-container">
-                  {selectedFile.type === 'video' ? (
-                    /* YouTube Embed Player with Preview Cover */
-                    <div className="iframe-scroll-wrapper" style={{ background: '#000', position: 'relative' }}>
-                      {isPlayingVideo ? (
-                        <iframe 
-                          src={`https://www.youtube.com/embed/${selectedFile.id}?autoplay=1&rel=0`} 
-                          width="100%" 
-                          height="100%" 
-                          style={{ border: 'none', display: 'block' }}
-                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                          allowFullScreen
-                          title={selectedFile.name}
-                        />
-                      ) : (
-                        <div className="video-player-preview" onClick={() => setIsPlayingVideo(true)}>
-                          <img 
-                            src={selectedFile.thumbnailLink} 
-                            alt={selectedFile.name} 
-                            className="player-preview-thumbnail"
-                          />
-                          <div className="video-player-preview-overlay">
-                            <div className="video-player-play-btn">
-                              <Play size={40} fill="currentColor" />
-                            </div>
-                            <span className="video-player-play-text">לחץ לניגון הסרטון</span>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  ) : isMockFile ? (
-                    /* Beautiful interactive OCR mock reader for local demonstration */
-                    <div className="mock-reader-layout">
-                      {/* Articles Sidebar */}
-                      <div className="reader-sidebar">
-                        <h4 className="reader-sidebar-title">מאמרים בגליון</h4>
-                        <ul className="reader-articles-list">
-                          {MOCK_ARTICLES.map((art, idx) => (
-                            <li key={idx}>
-                              <button 
-                                className={`reader-article-btn ${activeMockArticleIndex === idx ? 'active' : ''}`}
-                                onClick={() => setActiveMockArticleIndex(idx)}
-                              >
-                                <div className="art-sidebar-title">{art.title}</div>
-                                <span className="art-sidebar-author">מאת: {art.author}</span>
-                              </button>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                      
-                      {/* Article content view */}
-                      <div className="reader-content-body">
-                        {/* Font size control bar */}
-                        <div className="reader-font-controls">
-                          <span className="font-controls-label">גודל גופן:</span>
-                          <button 
-                            className="font-btn" 
-                            onClick={() => setReaderFontSize(prev => Math.min(26, prev + 2))} 
-                            title="הגדל גופן"
-                          >
-                            A+
-                          </button>
-                          <button 
-                            className="font-btn" 
-                            onClick={() => setReaderFontSize(prev => Math.max(12, prev - 2))} 
-                            title="הקטן גופן"
-                          >
-                            A-
-                          </button>
-                          <button 
-                            className="font-btn reset-btn" 
-                            onClick={() => setReaderFontSize(16)} 
-                            title="איפוס גופן"
-                          >
-                            איפוס
-                          </button>
-                        </div>
-
-                        <div className="reader-content-wrapper">
-                          <span className="hero-tag article-role">{MOCK_ARTICLES[activeMockArticleIndex].role}</span>
-                          <h3 className="article-title">{MOCK_ARTICLES[activeMockArticleIndex].title}</h3>
-                          <h4 className="article-author">מאת: {MOCK_ARTICLES[activeMockArticleIndex].author}</h4>
-                          <p className="article-paragraph" style={{ fontSize: `${readerFontSize}px` }}>
-                            {MOCK_ARTICLES[activeMockArticleIndex].content}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  ) : (
-                    /* Google Drive real iframe PDF preview */
-                    <div className="iframe-scroll-wrapper">
-                      <iframe 
-                        src={selectedFile.localUrl ? `${import.meta.env.BASE_URL || '/'}${selectedFile.localUrl}` : `https://drive.google.com/file/d/${selectedFile.id}/preview`} 
-                        width="100%" 
-                        height="100%" 
-                        style={{ border: 'none', display: 'block' }}
-                        scrolling="yes"
-                        allow="autoplay"
-                        title="תצוגה מקדימה פנימית"
-                      />
-                    </div>
-                  )}
-                </div>
-              </div>
-            ) : (
-              /* Welcome Mode: Interactive Dashboard & Advanced Full-Text Search */
-              <div className="library-welcome-dashboard animate-fade-in">
-                
-                {/* Large Category Navigation Buttons */}
-                <div className="category-nav-cards">
-                  {categories.map(cat => {
-                    let icon = <BookOpen size={28} />;
-                    let subtitle = "מדריכי עומק וכלים פיננסיים";
-                    
-                    if (cat.name === 'חוברות') {
-                      icon = <FileText size={28} />;
-                      subtitle = "עלונים שבועיים וגליונות טיפים";
-                    } else if (cat.name === 'סרטונים') {
-                      icon = <Video size={28} />;
-                      subtitle = "שיעורים וסרטוני הקהילה";
-                    }
-                    
-                    const isActive = activeCategory?.id === cat.id;
-                    
-                    return (
-                      <button 
-                        key={cat.id}
-                        className={`category-nav-card glass-card ${isActive ? 'active' : ''}`}
-                        onClick={() => {
-                          setActiveCategory(cat);
-                          setNameSearchQuery(''); // Reset name filter on category switch
-                        }}
-                      >
-                        <div className="category-card-icon-wrapper">
-                          {icon}
-                        </div>
-                        <div className="category-card-content">
-                          <h4 className="category-card-title">{cat.name}</h4>
-                          <span className="category-card-subtitle">{subtitle}</span>
-                          <span className="category-card-count">{cat.files ? cat.files.length : 0} פריטים</span>
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
-
-                {/* Separate search input for searching inside all files */}
-                <div className="fulltext-search-container glass-card">
-                  <div className="fulltext-search-header-info">
-                    <h3 className="fulltext-search-heading">חיפוש חכם בתוך תוכן כל החוברות והמדריכים</h3>
-                    <p className="fulltext-search-subheading">
-                      הקלד מילה או ביטוי, והמערכת תבצע סריקת טקסט מלאה (OCR) בתוך כל החוברות והמדריכים של הקהילה!
-                    </p>
-                  </div>
-                  
-                  <div className="search-input-wrapper">
-                    <input 
-                      type="text" 
-                      className="search-input"
-                      placeholder="הקלד ביטוי לחיפוש (לדוגמה: משכנתא, עסק, מחיר, ריבית, נדלן...)"
-                      value={contentSearchQuery}
-                      onChange={(e) => setContentSearchQuery(e.target.value)}
-                    />
-                    <Search className="search-icon" size={20} />
-                  </div>
-
-                  {/* Display beautiful full-text search results inside container */}
-                  {contentSearchQuery.trim() !== '' && (
-                    <div className="fulltext-results-area animate-fade-in">
-                      <h4 className="fulltext-results-title">
-                        נמצאו {fullTextSearchResults.length} תוצאות עבור "{contentSearchQuery}"
-                      </h4>
-                      
-                      {fullTextSearchResults.length === 0 ? (
-                        <div className="fulltext-empty">לא נמצאו התאמות בתוכן הקבצים. נסה מילת חיפוש אחרת.</div>
-                      ) : (
-                        <div className="fulltext-results-list">
-                          {fullTextSearchResults.map(result => (
-                            <div key={result.id} className="fulltext-result-card glass-card">
-                              <div className="result-card-header">
-                                <div className="result-file-details">
-                                  <span className="result-file-category">{result.categoryName}</span>
-                                  <h5 className="result-file-name">{result.name}</h5>
-                                </div>
-                                <button 
-                                  className="btn-card-primary"
-                                  onClick={() => {
-                                    handleSelectFile(result);
-                                    // Set category active
-                                    const cat = categories.find(c => c.name === result.categoryName);
-                                    if (cat) setActiveCategory(cat);
-                                  }}
-                                >
-                                  <span>מעבר לקריאת הקובץ</span>
-                                  <ChevronLeft size={14} />
-                                </button>
-                              </div>
-                              <p className="result-snippet">
-                                <strong>מקטע שנמצא:</strong> <span dangerouslySetInnerHTML={{ __html: highlightSnippet(result.searchHighlight, contentSearchQuery) }} />
-                              </p>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-
-                {/* Grid of All Available Handbooks in Category (as elegant list cards) */}
-                <div className="dashboard-guides-section">
-                  <h3 className="guides-section-title">
-                    {activeCategory?.name === 'סרטונים' ? 'סרטוני הדרכה ושיעורים' : `כל המדריכים והחוברות בקטגוריה: ${activeCategory?.name}`}
-                  </h3>
-                  <div className={activeCategory?.name === 'סרטונים' ? 'dashboard-videos-grid' : 'dashboard-guides-grid'}>
-                    {filteredFilesByName.length === 0 ? (
-                      <div className="empty-view glass-card" style={{ gridColumn: '1 / -1', padding: '40px' }}>
-                        <Globe className="empty-icon" size={40} />
-                        <h3 className="empty-title">לא נמצאו קבצים מתאימים</h3>
-                      </div>
-                    ) : (
-                      filteredFilesByName.map(file => {
-                        const isVideo = file.type === 'video';
-                        
-                        if (isVideo) {
-                          return (
-                            <div key={file.id} className="dashboard-video-card glass-card" onClick={() => handleSelectFile(file)}>
-                              <div className="video-card-thumbnail-wrapper">
-                                <img src={file.thumbnailLink} alt={file.name} className="video-card-thumbnail" />
-                                <div className="video-card-play-overlay">
-                                  <div className="play-button-circle">
-                                    <Play size={20} fill="currentColor" />
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="video-card-body">
-                                <h4 className="video-card-title">{file.name}</h4>
-                                <div className="video-card-footer">
-                                  <span className="video-card-date">
-                                    {new Date(file.modifiedTime).toLocaleDateString('he-IL')}
-                                  </span>
-                                  <span className="video-card-action">צפייה בסרטון ←</span>
-                                </div>
-                              </div>
-                            </div>
-                          );
-                        }
-                        
-                        const isDefaultAuthor = !file.author || file.author === 'מערכת כלכלה נכונה';
-                        const isDefaultDesc = !file.description || file.description === 'קובץ מקצועי מתוך קהילת טיפים לכלכלה נכונה.';
-                        
-                        return (
-                          <div key={file.id} className="dashboard-guide-card glass-card" onClick={() => handleSelectFile(file)}>
-                            <div className="guide-card-icon">
-                              {activeCategory?.name === 'חוברות' ? <FileText size={24} /> : <BookOpen size={24} />}
-                            </div>
-                            <div className="guide-card-body">
-                              <h4 className="guide-card-title">{file.name}</h4>
-                              {!isDefaultDesc && <p className="guide-card-desc">{file.description}</p>}
-                              <div className="guide-card-footer">
-                                {!isDefaultAuthor && <span className="guide-card-author">מאת: {file.author}</span>}
-                                <span className="guide-card-action">קרא כעת ←</span>
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })
-                    )}
-                  </div>
-                </div>
-
-                {/* Dashboard Stats */}
-                <div className="dashboard-stats-grid" style={{ marginTop: '40px' }}>
-                  <div className="dashboard-stat-card glass-card">
-                    <Users size={28} className="dashboard-stat-icon" />
-                    <div>
-                      <span className="dashboard-stat-num">8,000+</span>
-                      <span className="dashboard-stat-text">חברי קבוצה</span>
-                    </div>
-                  </div>
-                  <div className="dashboard-stat-card glass-card">
-                    <BookOpen size={28} className="dashboard-stat-icon" />
-                    <div>
-                      <span className="dashboard-stat-num">700+</span>
-                      <span className="dashboard-stat-text">מדריכים וטיפים</span>
-                    </div>
-                  </div>
-                  <div className="dashboard-stat-card glass-card">
-                    <MessageCircle size={28} className="dashboard-stat-icon" />
-                    <div>
-                      <span className="dashboard-stat-num">2,500+</span>
-                      <span className="dashboard-stat-text">פניות שנענו</span>
-                    </div>
-                  </div>
-                </div>
 
                 {/* Community marketing info */}
                 <div className="dashboard-welcome-info glass-card" style={{ marginTop: '30px' }}>
@@ -894,13 +659,251 @@ function App() {
                     </div>
                   </div>
                 </section>
-
               </div>
             )}
-          </div>
-        </section>
 
       </main>
+
+      {/* 1. Document Viewer Modal (Overlay Preview) */}
+      {selectedFile && (
+        <div className="modal-overlay animate-fade-in" onClick={handleCloseModal}>
+          <div className="modal-container glass-card animate-scale-in" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <div className="modal-title-section">
+                <span className="modal-category-badge">{activeCategory?.name || (selectedFile.type === 'video' ? 'סרטונים' : '')}</span>
+                <h2 className="modal-title">{selectedFile.name}</h2>
+                <div className="modal-meta">
+                  {selectedFile.author && selectedFile.author !== 'מערכת כלכלה נכונה' && (
+                    <>
+                      <span className="modal-author">מאת: {selectedFile.author}</span>
+                      <span className="modal-divider">•</span>
+                    </>
+                  )}
+                  <span className="modal-date">{new Date(selectedFile.modifiedTime).toLocaleDateString('he-IL')}</span>
+                  {selectedFile.size > 0 && (
+                    <>
+                      <span className="modal-divider">•</span>
+                      <span className="modal-size">{formatBytes(selectedFile.size)}</span>
+                    </>
+                  )}
+                </div>
+              </div>
+              
+              <div className="modal-actions">
+                {selectedFile.webContentLink && selectedFile.webContentLink !== '#' ? (
+                  <a href={selectedFile.webContentLink} className="btn-primary">
+                    <Download size={16} />
+                    <span>הורדה</span>
+                  </a>
+                ) : (
+                  selectedFile.type !== 'video' && (
+                    <button className="btn-primary" onClick={() => alert('קבצי דמה אינם ניתנים להורדה.')}>
+                      <Download size={16} />
+                      <span>הורדה</span>
+                    </button>
+                  )
+                )}
+                <button className="btn-secondary close-modal-btn" onClick={handleCloseModal}>
+                  <span>סגור</span>
+                </button>
+              </div>
+            </div>
+
+            <div className="modal-body-container">
+              {selectedFile.type === 'video' ? (
+                /* YouTube Player */
+                <div className="iframe-scroll-wrapper" style={{ background: '#000', position: 'relative' }}>
+                  {isPlayingVideo ? (
+                    <iframe 
+                      src={`https://www.youtube.com/embed/${selectedFile.id}?autoplay=1&rel=0`} 
+                      width="100%" 
+                      height="100%" 
+                      style={{ border: 'none', display: 'block' }}
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      title={selectedFile.name}
+                    />
+                  ) : (
+                    <div className="video-player-preview" onClick={() => setIsPlayingVideo(true)}>
+                      <img 
+                        src={selectedFile.thumbnailLink} 
+                        alt={selectedFile.name} 
+                        className="player-preview-thumbnail"
+                      />
+                      <div className="video-player-preview-overlay">
+                        <div className="video-player-play-btn">
+                          <Play size={40} fill="currentColor" />
+                        </div>
+                        <span className="video-player-play-text">לחץ לניגון הסרטון</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : isMockFile ? (
+                /* Interactive OCR Mock Reader */
+                <div className="mock-reader-layout">
+                  <div className="reader-sidebar">
+                    <h4 className="reader-sidebar-title">מאמרים בגליון</h4>
+                    <ul className="reader-articles-list">
+                      {MOCK_ARTICLES.map((art, idx) => (
+                        <li key={idx}>
+                          <button 
+                            className={`reader-article-btn ${activeMockArticleIndex === idx ? 'active' : ''}`}
+                            onClick={() => setActiveMockArticleIndex(idx)}
+                          >
+                            <div className="art-sidebar-title">{art.title}</div>
+                            <span className="art-sidebar-author">מאת: {art.author}</span>
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  
+                  <div className="reader-content-body">
+                    <div className="reader-font-controls">
+                      <span className="font-controls-label">גודל גופן:</span>
+                      <button className="font-btn" onClick={() => setReaderFontSize(prev => Math.min(26, prev + 2))}>A+</button>
+                      <button className="font-btn" onClick={() => setReaderFontSize(prev => Math.max(12, prev - 2))}>A-</button>
+                      <button className="font-btn reset-btn" onClick={() => setReaderFontSize(16)}>איפוס</button>
+                    </div>
+
+                    <div className="reader-content-wrapper">
+                      <span className="hero-tag article-role">{MOCK_ARTICLES[activeMockArticleIndex].role}</span>
+                      <h3 className="article-title">{MOCK_ARTICLES[activeMockArticleIndex].title}</h3>
+                      <h4 className="article-author">מאת: {MOCK_ARTICLES[activeMockArticleIndex].author}</h4>
+                      <p className="article-paragraph" style={{ fontSize: `${readerFontSize}px` }}>
+                        {MOCK_ARTICLES[activeMockArticleIndex].content}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                /* Google Drive real iframe PDF preview */
+                <div className="iframe-scroll-wrapper">
+                  <iframe 
+                    src={selectedFile.localUrl ? `${import.meta.env.BASE_URL || '/'}${selectedFile.localUrl}` : `https://drive.google.com/file/d/${selectedFile.id}/preview`} 
+                    width="100%" 
+                    height="100%" 
+                    style={{ border: 'none', display: 'block' }}
+                    scrolling="yes"
+                    allow="autoplay"
+                    title="תצוגה מקדימה פנימית"
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 2. Smart OCR Content Search Modal */}
+      {isSmartSearchOpen && (
+        <div className="modal-overlay animate-fade-in" onClick={() => setIsSmartSearchOpen(false)}>
+          <div className="modal-container search-modal-container glass-card animate-scale-in" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <div className="modal-title-section">
+                <h2 className="modal-title">חיפוש חכם בתוך תוכן כל החוברות והמדריכים</h2>
+                <p className="modal-subtitle">סריקת טקסט מלאה (OCR) בתוך כל החוברות והמדריכים של הקהילה לאיתור דפים ומידע</p>
+              </div>
+              <div className="modal-actions">
+                <button className="btn-secondary close-modal-btn" onClick={() => setIsSmartSearchOpen(false)}>
+                  <span>סגור</span>
+                </button>
+              </div>
+            </div>
+            
+            <div className="modal-body-container search-modal-body">
+              <div className="search-input-wrapper large-search">
+                <input 
+                  type="text" 
+                  className="search-input"
+                  placeholder="הקלד ביטוי לחיפוש (לדוגמה: משכנתא, עסק, מחיר, ריבית, נדלן...)"
+                  value={contentSearchQuery}
+                  onChange={(e) => setContentSearchQuery(e.target.value)}
+                  autoFocus
+                />
+                <Search className="search-icon" size={22} />
+              </div>
+
+              {contentSearchQuery.trim() !== '' && (
+                <div className="fulltext-results-area animate-fade-in" style={{ marginTop: '20px' }}>
+                  <h4 className="fulltext-results-title">
+                    נמצאו {fullTextSearchResults.length} תוצאות עבור "{contentSearchQuery}"
+                  </h4>
+                  
+                  {fullTextSearchResults.length === 0 ? (
+                    <div className="fulltext-empty">לא נמצאו התאמות בתוכן הקבצים. נסה מילת חיפוש אחרת.</div>
+                  ) : (
+                    <div className="fulltext-results-list">
+                      {fullTextSearchResults.map(result => (
+                        <div key={result.id} className="fulltext-result-card glass-card">
+                          <div className="result-card-header">
+                            <div className="result-file-details">
+                              <span className="result-file-category">{result.categoryName}</span>
+                              <h5 className="result-file-name">{result.name}</h5>
+                            </div>
+                            <button 
+                              className="btn-card-primary"
+                              onClick={() => {
+                                handleSelectFile(result);
+                                // Set active tab and category
+                                const cat = categories.find(c => c.name === result.categoryName);
+                                if (cat) {
+                                  setActiveCategory(cat);
+                                  setActiveTab(cat.name);
+                                }
+                                setIsSmartSearchOpen(false); // Close search modal
+                              }}
+                            >
+                              <span>מעבר לקריאת הקובץ</span>
+                              <ChevronLeft size={14} />
+                            </button>
+                          </div>
+                          <p className="result-snippet">
+                            <strong>מקטע שנמצא:</strong> <span dangerouslySetInnerHTML={{ __html: highlightSnippet(result.searchHighlight, contentSearchQuery) }} />
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 3. Community Chat updates Side Drawer */}
+      {isChatDrawerOpen && (
+        <div className="drawer-overlay animate-fade-in" onClick={() => setIsChatDrawerOpen(false)}>
+          <div className="drawer-container glass-card" onClick={(e) => e.stopPropagation()}>
+            <div className="drawer-header">
+              <div className="drawer-title-section">
+                <h3 className="drawer-title">עדכוני הקהילה בצ'אט</h3>
+                <span className="drawer-subtitle">הודעות ועדכונים שוטפים מקבוצת מסודרים</span>
+              </div>
+              <button className="btn-secondary close-drawer-btn" onClick={() => setIsChatDrawerOpen(false)}>
+                <span>סגור</span>
+              </button>
+            </div>
+            
+            <div className="drawer-body">
+              <iframe 
+                src="https://mesudarim.chatfree.app/" 
+                title="ערוץ העדכונים של הקהילה"
+                className="drawer-iframe"
+                style={{ width: '100%', height: '100%', border: 'none', borderRadius: '12px' }}
+              />
+              <div className="drawer-fallback-footer">
+                <p>עקב הגדרות סינון אינטרנט (נטפרי/אתרוג וכד'), ייתכן והצ'אט ייחסם להצגה בתוך האתר.</p>
+                <a href="https://mesudarim.chatfree.app/" target="_blank" rel="noopener noreferrer" className="btn-accent" style={{ display: 'inline-flex', marginTop: '10px' }}>
+                  <span>פתיחת ערוץ הצ'אט בחלון חדש</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Footer */}
       <footer className="app-footer">
