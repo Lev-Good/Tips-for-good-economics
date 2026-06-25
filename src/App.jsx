@@ -102,7 +102,6 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [showHelpAlert, setShowHelpAlert] = useState(false);
   const [isSmartSearchOpen, setIsSmartSearchOpen] = useState(false);
-  const [isChatDrawerOpen, setIsChatDrawerOpen] = useState(false);
   
   // Selected File for Overlay Modal
   const [selectedFile, setSelectedFile] = useState(null);
@@ -296,10 +295,17 @@ function App() {
           </div>
           
           <div className="header-actions">
-            <button className="btn-secondary chat-drawer-toggle" onClick={() => setIsChatDrawerOpen(true)} style={{ display: 'flex', alignItems: 'center', gap: '8px' }} title="עדכוני הקהילה בצ'אט">
+            <a 
+              href="https://mesudarim.chatfree.app/" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="btn-secondary chat-drawer-toggle" 
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', textDecoration: 'none' }} 
+              title="עדכוני הקהילה בצ'אט"
+            >
               <MessageCircle size={16} />
               <span>עדכוני הקהילה בצ'אט</span>
-            </button>
+            </a>
             
             <button className="theme-toggle" onClick={toggleTheme} title="שינוי מצב עיצוב">
               {theme === 'light' ? (
@@ -873,61 +879,7 @@ function App() {
         </div>
       )}
 
-      {/* 3. Community Chat updates Side Drawer */}
-      {isChatDrawerOpen && (
-        <div className="drawer-overlay animate-fade-in" onClick={() => setIsChatDrawerOpen(false)}>
-          <div className="drawer-container glass-card" onClick={(e) => e.stopPropagation()}>
-            <div className="drawer-header">
-              <div className="drawer-title-section">
-                <h3 className="drawer-title">עדכוני הקהילה בצ'אט</h3>
-                <span className="drawer-subtitle">הודעות ועדכונים שוטפים מקבוצת מסודרים</span>
-              </div>
-              <button className="btn-secondary close-drawer-btn" onClick={() => setIsChatDrawerOpen(false)}>
-                <span>סגור</span>
-              </button>
-            </div>
-            
-            <div className="drawer-body" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center', padding: '30px 24px', gap: '20px' }}>
-              <div className="chat-promo-icon-wrapper" style={{ background: 'rgba(var(--primary-rgb), 0.08)', color: 'var(--primary)', width: '80px', height: '80px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '10px' }}>
-                <MessageCircle size={40} />
-              </div>
-              <h3 style={{ fontSize: '20px', fontWeight: '800', color: 'var(--text-primary)', margin: 0, fontFamily: 'var(--font-heading)' }}>חיבור לערוץ העדכונים</h3>
-              <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: '1.6', margin: 0 }}>
-                מטעמי אבטחה של גוגל, לא ניתן לבצע התחברות לחשבון וצפייה בערוץ הצ'אט של "מסודרים" ישירות בתוך מסגרת פנימית באתר (Iframe).
-              </p>
-              <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: '1.6', margin: 0 }}>
-                לחצו על הכפתור למטה כדי לפתוח את ערוץ העדכונים בצורה מאובטחת בחלון חדש.
-              </p>
-              
-              <a 
-                href="https://mesudarim.chatfree.app/" 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="btn-accent" 
-                style={{ 
-                  display: 'inline-flex', 
-                  alignItems: 'center', 
-                  gap: '8px', 
-                  padding: '14px 28px', 
-                  borderRadius: '12px', 
-                  fontSize: '16px', 
-                  fontWeight: '700',
-                  marginTop: '10px',
-                  boxShadow: 'var(--shadow-md)',
-                  textDecoration: 'none'
-                }}
-              >
-                <span>פתחו את ערוץ העדכונים בחלון חדש</span>
-                <Globe size={18} />
-              </a>
-              
-              <div style={{ marginTop: 'auto', borderTop: '1px solid var(--card-border)', paddingTop: '20px', fontSize: '12px', color: 'var(--text-secondary)', width: '100%' }}>
-                ערוץ העדכונים מציג את הטיפים וההודעות השוטפות של קבוצת מסודרים.
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+
 
       {/* Footer */}
       <footer className="app-footer">
