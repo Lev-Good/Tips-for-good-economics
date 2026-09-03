@@ -9,30 +9,69 @@
     "name": "מדריכים",
     "files": [
       {
-        "id": "1tCfJGDiN5EqY5rWpv-8-AGsOyuzkGiEF",
-        "name": "המדריך המעשי והמפורט לביצוע תיאום מס הכנסה",
+        "id": "1oqWq2QERdzGFCDrY4_woBO4qFoCH1fgX",
+        "name": "קרנות מנוטרלות מטח מדריך מושגים",
         "mimeType": "application/pdf",
-        "webViewLink": "https://drive.google.com/file/d/1tCfJGDiN5EqY5rWpv-8-AGsOyuzkGiEF/view?usp=drivesdk",
-        "webContentLink": "https://drive.google.com/uc?export=download&id=1tCfJGDiN5EqY5rWpv-8-AGsOyuzkGiEF",
-        "thumbnailLink": "https://drive.google.com/thumbnail?id=1tCfJGDiN5EqY5rWpv-8-AGsOyuzkGiEF&sz=w600",
-        "modifiedTime": "2026-08-29T18:18:36.000Z",
-        "size": "4755507",
+        "webViewLink": "https://drive.google.com/file/d/1oqWq2QERdzGFCDrY4_woBO4qFoCH1fgX/view?usp=drivesdk",
+        "webContentLink": "https://drive.google.com/uc?export=download&id=1oqWq2QERdzGFCDrY4_woBO4qFoCH1fgX",
+        "thumbnailLink": "https://drive.google.com/thumbnail?id=1oqWq2QERdzGFCDrY4_woBO4qFoCH1fgX&sz=w600",
+        "modifiedTime": "2026-09-02T15:37:33.550Z",
+        "size": "3832966",
         "description": "קובץ מקצועי מתוך קהילת טיפים לכלכלה נכונה.",
         "author": "מערכת כלכלה נכונה",
-        "localUrl": "documents/1tCfJGDiN5EqY5rWpv-8-AGsOyuzkGiEF.pdf"
+        "localUrl": "documents/1oqWq2QERdzGFCDrY4_woBO4qFoCH1fgX.pdf"
       },
       {
         "id": "10KKGRRTd72D-ATnQFQX_t3YlsgpdkqpQ",
-        "name": "מדריך קרן כספית (2)",
+        "name": "מדריך קרן כספית ",
         "mimeType": "application/pdf",
         "webViewLink": "https://drive.google.com/file/d/10KKGRRTd72D-ATnQFQX_t3YlsgpdkqpQ/view?usp=drivesdk",
         "webContentLink": "https://drive.google.com/uc?export=download&id=10KKGRRTd72D-ATnQFQX_t3YlsgpdkqpQ",
         "thumbnailLink": "https://drive.google.com/thumbnail?id=10KKGRRTd72D-ATnQFQX_t3YlsgpdkqpQ&sz=w600",
-        "modifiedTime": "2026-03-17T21:39:02.000Z",
+        "modifiedTime": "2026-09-02T15:37:14.332Z",
         "size": "5246877",
         "description": "קובץ מקצועי מתוך קהילת טיפים לכלכלה נכונה.",
         "author": "מערכת כלכלה נכונה",
         "localUrl": "documents/10KKGRRTd72D-ATnQFQX_t3YlsgpdkqpQ.pdf"
+      },
+      {
+        "id": "1PHZq1mUadWNQvP64kOO729EjZK1bGQ8c",
+        "name": "מדריך להשקעה נכונה של דמי החסכון לכל ילד",
+        "mimeType": "application/pdf",
+        "webViewLink": "https://drive.google.com/file/d/1PHZq1mUadWNQvP64kOO729EjZK1bGQ8c/view?usp=drivesdk",
+        "webContentLink": "https://drive.google.com/uc?export=download&id=1PHZq1mUadWNQvP64kOO729EjZK1bGQ8c",
+        "thumbnailLink": "https://drive.google.com/thumbnail?id=1PHZq1mUadWNQvP64kOO729EjZK1bGQ8c&sz=w600",
+        "modifiedTime": "2026-09-02T15:36:59.533Z",
+        "size": "3263953",
+        "description": "קובץ מקצועי מתוך קהילת טיפים לכלכלה נכונה.",
+        "author": "מערכת כלכלה נכונה",
+        "localUrl": "documents/1PHZq1mUadWNQvP64kOO729EjZK1bGQ8c.pdf"
+      },
+      {
+        "id": "1LiRlE1_q3LDu4K2UbNR5tW99EQSaKfqp",
+        "name": "המדריך למשקיע הפאסיבי המתחיל",
+        "mimeType": "application/pdf",
+        "webViewLink": "https://drive.google.com/file/d/1LiRlE1_q3LDu4K2UbNR5tW99EQSaKfqp/view?usp=drivesdk",
+        "webContentLink": "https://drive.google.com/uc?export=download&id=1LiRlE1_q3LDu4K2UbNR5tW99EQSaKfqp",
+        "thumbnailLink": "https://drive.google.com/thumbnail?id=1LiRlE1_q3LDu4K2UbNR5tW99EQSaKfqp&sz=w600",
+        "modifiedTime": "2026-09-02T15:36:40.536Z",
+        "size": "1262025",
+        "description": "קובץ מקצועי מתוך קהילת טיפים לכלכלה נכונה.",
+        "author": "מערכת כלכלה נכונה",
+        "localUrl": "documents/1LiRlE1_q3LDu4K2UbNR5tW99EQSaKfqp.pdf"
+      },
+      {
+        "id": "1tCfJGDiN5EqY5rWpv-8-AGsOyuzkGiEF",
+        "name": "המדריך לביצוע תיאום מס הכנסה",
+        "mimeType": "application/pdf",
+        "webViewLink": "https://drive.google.com/file/d/1tCfJGDiN5EqY5rWpv-8-AGsOyuzkGiEF/view?usp=drivesdk",
+        "webContentLink": "https://drive.google.com/uc?export=download&id=1tCfJGDiN5EqY5rWpv-8-AGsOyuzkGiEF",
+        "thumbnailLink": "https://drive.google.com/thumbnail?id=1tCfJGDiN5EqY5rWpv-8-AGsOyuzkGiEF&sz=w600",
+        "modifiedTime": "2026-09-02T15:36:30.284Z",
+        "size": "4755507",
+        "description": "קובץ מקצועי מתוך קהילת טיפים לכלכלה נכונה.",
+        "author": "מערכת כלכלה נכונה",
+        "localUrl": "documents/1tCfJGDiN5EqY5rWpv-8-AGsOyuzkGiEF.pdf"
       },
       {
         "id": "1cLqC2Ru_omW6MxGSMN-7NxZBSigOk76q",
@@ -46,19 +85,6 @@
         "description": "קובץ מקצועי מתוך קהילת טיפים לכלכלה נכונה.",
         "author": "מערכת כלכלה נכונה",
         "localUrl": "documents/1cLqC2Ru_omW6MxGSMN-7NxZBSigOk76q.pdf"
-      },
-      {
-        "id": "1oqWq2QERdzGFCDrY4_woBO4qFoCH1fgX",
-        "name": "קרנות מנוטרלות מטח (1)",
-        "mimeType": "application/pdf",
-        "webViewLink": "https://drive.google.com/file/d/1oqWq2QERdzGFCDrY4_woBO4qFoCH1fgX/view?usp=drivesdk",
-        "webContentLink": "https://drive.google.com/uc?export=download&id=1oqWq2QERdzGFCDrY4_woBO4qFoCH1fgX",
-        "thumbnailLink": "https://drive.google.com/thumbnail?id=1oqWq2QERdzGFCDrY4_woBO4qFoCH1fgX&sz=w600",
-        "modifiedTime": "2025-11-11T11:52:07.000Z",
-        "size": "3832966",
-        "description": "קובץ מקצועי מתוך קהילת טיפים לכלכלה נכונה.",
-        "author": "מערכת כלכלה נכונה",
-        "localUrl": "documents/1oqWq2QERdzGFCDrY4_woBO4qFoCH1fgX.pdf"
       },
       {
         "id": "1R29kE0XpcsFhsNraoFHjgI43tnSccKde",
@@ -137,32 +163,6 @@
         "description": "קובץ מקצועי מתוך קהילת טיפים לכלכלה נכונה.",
         "author": "מערכת כלכלה נכונה",
         "localUrl": "documents/1IXX33vpaP8VY0R8XITC__lMpYAH0w0bJ.pdf"
-      },
-      {
-        "id": "1PHZq1mUadWNQvP64kOO729EjZK1bGQ8c",
-        "name": "מדריך חסכון לכל ילד",
-        "mimeType": "application/pdf",
-        "webViewLink": "https://drive.google.com/file/d/1PHZq1mUadWNQvP64kOO729EjZK1bGQ8c/view?usp=drivesdk",
-        "webContentLink": "https://drive.google.com/uc?export=download&id=1PHZq1mUadWNQvP64kOO729EjZK1bGQ8c",
-        "thumbnailLink": "https://drive.google.com/thumbnail?id=1PHZq1mUadWNQvP64kOO729EjZK1bGQ8c&sz=w600",
-        "modifiedTime": "2025-06-26T06:16:26.000Z",
-        "size": "3263953",
-        "description": "קובץ מקצועי מתוך קהילת טיפים לכלכלה נכונה.",
-        "author": "מערכת כלכלה נכונה",
-        "localUrl": "documents/1PHZq1mUadWNQvP64kOO729EjZK1bGQ8c.pdf"
-      },
-      {
-        "id": "1LiRlE1_q3LDu4K2UbNR5tW99EQSaKfqp",
-        "name": "המדריך המעשי למשקיע הפאסיבי המתחיל",
-        "mimeType": "application/pdf",
-        "webViewLink": "https://drive.google.com/file/d/1LiRlE1_q3LDu4K2UbNR5tW99EQSaKfqp/view?usp=drivesdk",
-        "webContentLink": "https://drive.google.com/uc?export=download&id=1LiRlE1_q3LDu4K2UbNR5tW99EQSaKfqp",
-        "thumbnailLink": "https://drive.google.com/thumbnail?id=1LiRlE1_q3LDu4K2UbNR5tW99EQSaKfqp&sz=w600",
-        "modifiedTime": "2025-06-26T06:13:46.000Z",
-        "size": "1262025",
-        "description": "קובץ מקצועי מתוך קהילת טיפים לכלכלה נכונה.",
-        "author": "מערכת כלכלה נכונה",
-        "localUrl": "documents/1LiRlE1_q3LDu4K2UbNR5tW99EQSaKfqp.pdf"
       }
     ]
   },
